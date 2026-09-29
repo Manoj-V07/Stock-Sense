@@ -1,0 +1,87 @@
+feature,group,mandatory_or_unique,definition,leakage_risk,evidence,status
+day_of_week,GROUP A — TIME,Mandatory,"Day of week integer (1=Monday, 7=Sunday)",None (known from calendar),EDA confirmed strong day-of-week demand variation,REQUIRED
+weekend_flag,GROUP A — TIME,Mandatory,Binary flag for Saturday and Sunday,None (known from calendar),EDA weekend vs weekday tests showed significant volume shift,REQUIRED
+month,GROUP A — TIME,Mandatory,Calendar month (8 for August),None (known from calendar),Challenge required specification,REQUIRED
+week_no,GROUP A — TIME,Mandatory,ISO calendar week number (31 to 35),None (known from calendar),Captures intra-month weekly progression,REQUIRED
+festival_flag,GROUP A — TIME,Mandatory,Binary flag indicating local or public festival,None (pre-scheduled holiday),Positive demand association observed during festival events,REQUIRED
+day_of_month,GROUP A — TIME,Unique,Calendar day of month (1 to 31),None (known from calendar),Captures payday and monthly consumption cycles,CANDIDATE
+is_month_end,GROUP A — TIME,Unique,Binary flag for month-end period (day >= 28),None (known from calendar),End of month salary and grocery restocking cycle,CANDIDATE
+lag_1,GROUP B — DEMAND LAGS,Mandatory,Transaction demand 1 calendar day earlier (t-1),None (strictly t-1),Direct demand persistence signal,REQUIRED
+lag_7,GROUP B — DEMAND LAGS,Mandatory,Transaction demand 7 calendar days earlier (t-7),None (strictly t-7),Captures same-day-of-week demand seasonality,REQUIRED
+lag_14,GROUP B — DEMAND LAGS,Mandatory,Transaction demand 14 calendar days earlier (t-14),None (strictly t-14),Fortnightly cyclical demand signal,REQUIRED
+rolling_mean_7,GROUP C — ROLLING DEMAND,Mandatory,"Mean daily demand over trailing 7 calendar days [t-7, t-1]",None (strictly shifted),Core short-term level indicator for demand forecasting,REQUIRED
+rolling_mean_14,GROUP C — ROLLING DEMAND,Mandatory,"Mean daily demand over trailing 14 calendar days [t-14, t-1]",None (strictly shifted),Medium-term baseline level indicator,REQUIRED
+rolling_std_7,GROUP C — ROLLING DEMAND,Mandatory,"Standard deviation of demand over trailing 7 calendar days [t-7, t-1]",None (strictly shifted),Captures recent demand dispersion and uncertainty,REQUIRED
+days_of_inventory,GROUP D — INVENTORY,Mandatory,Closing stock / trailing daily demand (capped at 365),None (point-in-time closing & past demand),Core inventory sufficiency metric,REQUIRED
+inventory_to_demand_ratio,GROUP D — INVENTORY,Mandatory,Closing stock / trailing 7-day demand volume,None (point-in-time closing & past demand),Weekly coverage multiple for inventory planning,REQUIRED
+reorder_gap,GROUP D — INVENTORY,Mandatory,Closing stock minus reorder level,None (point-in-time closing & reorder level),Direct trigger for replenishment orders when negative,REQUIRED
+low_stock_flag,GROUP D — INVENTORY,Unique,Binary flag indicating closing <= reorder_lvl,None (point-in-time closing & reorder level),Operational reorder breach indicator,CANDIDATE
+stockout_observed,GROUP D — INVENTORY,Unique,Binary flag indicating closing <= 0 at observation date t,None (point-in-time closing),Identifies historical stock-out events for diagnostic review,CANDIDATE
+no_observed_demand_flag,GROUP D — INVENTORY,Unique,Flag indicating closing > 0 but trailing demand is zero,None (point-in-time closing & past demand),Identifies dormant or slow-moving stock,CANDIDATE
+days_to_stockout,GROUP D — INVENTORY,Unique,Expected days until depletion based on trailing demand rate,None (point-in-time closing & past demand),Critical operational runway metric,NEEDS ABLATION TEST
+lead_time_gap,GROUP D — INVENTORY,Unique,days_to_stockout minus supplier lead_days,None (point-in-time runway & supplier lead time),Direct replenishment safety buffer (negative = stockout risk),NEEDS ABLATION TEST
+discount_pct,GROUP E — PRICE / PROMOTION,Mandatory,Average percentage discount on date t,None (point-in-time transaction attribute),Direct price elasticity driver,REQUIRED
+promotion_flag,GROUP E — PRICE / PROMOTION,Mandatory,Binary promotion active flag on date t,None (point-in-time promotion state),Mann-Whitney test confirmed significant demand uplift,REQUIRED
+price_change,GROUP E — PRICE / PROMOTION,Mandatory,Selling price minus catalogue MRP,None (point-in-time price vs catalog MRP),Monetary price deviation from standard list price,REQUIRED
+price_change_pct,GROUP E — PRICE / PROMOTION,Unique,Percentage price discount relative to catalog MRP,None (point-in-time price vs catalog MRP),Standardized price realization percentage,CANDIDATE
+store_type,GROUP F — STORE,Mandatory,"Format of retail store (Supermarket, Hypermarket, etc.)",None (static metadata),Structural store format segmentation,REQUIRED
+city,GROUP F — STORE,Mandatory,Store location city,None (static metadata),Geographic clustering of demand,REQUIRED
+region,GROUP F — STORE,Mandatory,"Geographic region (North, South, etc.)",None (static metadata),Macro regional purchasing power,REQUIRED
+floor_area_sqft,GROUP F — STORE,Unique,Store floor area in square feet,None (static metadata),Store capacity and physical customer footprint,CANDIDATE
+avg_daily_customers,GROUP F — STORE,Unique,Historical average daily footfall benchmark,None (static master attribute),Proxy for store traffic baseline,CANDIDATE
+category,GROUP G — PRODUCT,Mandatory,"Standardised product category (Beverages, Dairy, etc.)",None (static catalog attribute),EDA revealed massive category-level revenue and velocity differences,REQUIRED
+sub_category,GROUP G — PRODUCT,Unique,Granular product sub-classification,None (static catalog attribute),Fine-grained demand clustering,CANDIDATE
+brand,GROUP G — PRODUCT,Mandatory,Product brand identifier,None (static catalog attribute),Brand loyalty and pricing power,REQUIRED
+mrp,GROUP G — PRODUCT,Unique,Maximum Retail Price (catalog list price),None (static catalog attribute),Baseline price anchor,CANDIDATE
+cost_price,GROUP G — PRODUCT,Unique,Wholesale procurement unit cost,None (static catalog attribute),Determines unit margins and inventory carrying valuation,CANDIDATE
+shelf_life_days,GROUP G — PRODUCT,Mandatory,Rated shelf life of product in days,None (static catalog attribute),Perishability constraint for Dairy and Fresh items,REQUIRED
+lead_days,GROUP G — PRODUCT,Mandatory,Supplier replenishment lead time in days,None (static contract parameter),Replenishment latency parameter,REQUIRED
+temp_c,GROUP H — EXTERNAL,Unique,Daily average ambient temperature in Celsius,None (point-in-time weather observation),Spearman correlation with Beverage category demand,CANDIDATE
+rain_mm,GROUP H — EXTERNAL,Unique,Daily precipitation in millimeters,None (point-in-time weather observation),Footfall impact during monsoon showers,CANDIDATE
+local_event,GROUP H — EXTERNAL,Unique,Binary flag for local sporting or cultural events,None (scheduled event),Localized demand spikes,CANDIDATE
+recent_7_day_demand,GROUP I — DEMAND MOMENTUM,Unique,"Sum of demand over trailing calendar window [t-7, t-1]",None (strictly shifted trailing window),Direct recent volume level,NEEDS ABLATION TEST
+previous_7_day_demand,GROUP I — DEMAND MOMENTUM,Unique,"Sum of demand over prior calendar window [t-14, t-8]",None (strictly shifted prior window),Prior baseline volume level,NEEDS ABLATION TEST
+demand_momentum_ratio,GROUP I — DEMAND MOMENTUM,Unique,recent_7_day_demand / previous_7_day_demand,None (strictly historical ratio),Quantifies trend direction (acceleration vs decline),NEEDS ABLATION TEST
+demand_change_pct,GROUP I — DEMAND MOMENTUM,Unique,Percentage change in demand across consecutive 7-day windows,None (strictly historical ratio),Scale-independent growth velocity metric,NEEDS ABLATION TEST
+momentum_class,GROUP I — DEMAND MOMENTUM,Unique,"Categorical velocity segment (Accelerating, Stable, Declining)",None (strictly historical thresholds),422 combinations identified as accelerating in Phase 2,NEEDS ABLATION TEST
+demand_cv_7,GROUP J — DEMAND VOLATILITY,Unique,"Coefficient of variation of demand over trailing [t-7, t-1]",None (strictly shifted trailing window),Differentiates erratic items from steady staples,NEEDS ABLATION TEST
+zero_demand_ratio_7,GROUP J — DEMAND VOLATILITY,Unique,"Proportion of zero-demand days in trailing [t-7, t-1]",None (strictly shifted trailing window),Quantifies demand intermittency frequency,NEEDS ABLATION TEST
+demand_range_7,GROUP J — DEMAND VOLATILITY,Unique,"Max minus min daily demand in trailing [t-7, t-1]",None (strictly shifted trailing window),Dispersion spread indicator,NEEDS ABLATION TEST
+intermittent_demand_flag,GROUP J — DEMAND VOLATILITY,Unique,Flag indicating >=50% zero demand days in trailing window,None (strictly shifted trailing window),Signals intermittent demand profile requiring Croston-type modeling,NEEDS ABLATION TEST
+demand_regime,GROUP K — DEMAND REGIME,Unique,"Behavioral classification (Stable, Accelerating, Declining, Volatile, Intermittent)",None (strictly historical rules),Phase 2 behavioral segmentation hypothesis,NEEDS ABLATION TEST
+inventory_balance_gap,GROUP L — RECONCILIATION / DATA QUALITY,Unique,closing - (opening + received - sold),None (point-in-time ledger audit),Phase 1 reconciliation found 2 arithmetic mismatches,CANDIDATE
+inventory_demand_gap,GROUP L — RECONCILIATION / DATA QUALITY,Unique,inventory_sold minus transaction_demand,None (point-in-time POS vs WMS comparison),Phase 1 established POS and WMS measure distinct flows,CANDIDATE
+inventory_consistency_flag,GROUP L — RECONCILIATION / DATA QUALITY,Unique,Binary flag indicating reconciliation_status == 'CONSISTENT',None (point-in-time ledger audit),99.97% consistent records identified in Phase 1,CANDIDATE
+inventory_data_quality_score,GROUP L — RECONCILIATION / DATA QUALITY,Unique,"Continuous composite score in [0, 1] penalizing data anomalies",None (point-in-time quality audit),Prevents noisy records from corrupting model training,CANDIDATE
+unit_margin,GROUP M — FINANCIAL,Unique,avg_selling_price - cost_price,None (point-in-time prices),Direct measure of profit generated per unit sold,CANDIDATE
+margin_pct,GROUP M — FINANCIAL,Unique,unit_margin / avg_selling_price,None (point-in-time prices),Normalized profit margin percentage,CANDIDATE
+inventory_value,GROUP M — FINANCIAL,Unique,closing * cost_price,None (point-in-time closing & cost price),Working capital tied up in inventory,CANDIDATE
+daily_revenue,GROUP M — FINANCIAL,Unique,transaction_demand * avg_selling_price,None (point-in-time daily sales value),Observed top-line sales throughput,CANDIDATE
+potential_revenue_exposure,GROUP M — FINANCIAL,Unique,closing * avg_selling_price,None (point-in-time inventory at selling price),Upper bound of realizable revenue in stock,CANDIDATE
+potential_margin_exposure,GROUP M — FINANCIAL,Unique,closing * unit_margin,None (point-in-time inventory at unit margin),Upper bound of realizable profit margin in stock,CANDIDATE
+stockout_exposure_value,GROUP M — FINANCIAL,Unique,Reorder level deficit valued at selling price,None (point-in-time reorder deficit),Monetary deficit required to restore safety buffer,CANDIDATE
+supplier_product_count,GROUP N — SUPPLIER,Unique,Total unique products sourced from this supplier,None (static catalog master),Supplier operational portfolio size,CANDIDATE
+supplier_avg_lead_time,GROUP N — SUPPLIER,Unique,Mean lead time for supplier product portfolio,None (static catalog master),Supplier responsiveness benchmark,CANDIDATE
+supplier_lead_time_std,GROUP N — SUPPLIER,Unique,Standard deviation of lead times across supplier portfolio,None (static catalog master),Supplier lead-time unpredictability,CANDIDATE
+supplier_dependency,GROUP N — SUPPLIER,Unique,Proportion of category products sourced from this supplier,None (static catalog master),Single-supplier concentration vulnerability,CANDIDATE
+network_product_mean_inventory,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Average closing inventory across all stores for this product on date t,None (contemporaneous date t cross-section),Network-wide stock availability baseline,NEEDS ABLATION TEST
+store_relative_inventory_ratio,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Store closing stock relative to network mean for this product,None (contemporaneous date t cross-section),Detects localized maldistribution of inventory,NEEDS ABLATION TEST
+network_product_mean_demand,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Average trailing demand across all stores for this product,None (contemporaneous trailing demand),Network velocity benchmark,NEEDS ABLATION TEST
+store_relative_demand_ratio,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Store trailing demand relative to network mean for this product,None (contemporaneous trailing demand),Detects high-velocity stores needing stock transfer,NEEDS ABLATION TEST
+excess_inventory_flag,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Flag indicating store has >1.5x network stock and >20 days coverage,None (contemporaneous rebalancing rule),Identifies donor stores for lateral inventory transfer,NEEDS ABLATION TEST
+shortage_risk_flag,GROUP O — CROSS-STORE INTELLIGENCE,Unique,Flag indicating store has <0.6x network stock and negative lead-time gap,None (contemporaneous rebalancing rule),Identifies recipient stores urgently requiring rebalancing,NEEDS ABLATION TEST
+shelf_life_exposure_ratio,GROUP P — SHELF-LIFE,Unique,days_to_stockout / shelf_life_days,None (point-in-time runway vs rated shelf life),Identifies inventory holding duration exceeding rated shelf life,NEEDS ABLATION TEST
+high_shelf_life_exposure_flag,GROUP P — SHELF-LIFE,Unique,Binary flag indicating shelf_life_exposure_ratio > 1.0,None (point-in-time runway vs rated shelf life),Flags holding risk for Dairy/perishable items without claiming expiry,NEEDS ABLATION TEST
+promo_x_weekend,GROUP Q — INTERACTIONS,Unique,promotion_flag * weekend_flag,None (point-in-time product of valid features),Promotions on weekends generate amplified footfall and sales,CANDIDATE
+discount_x_promo,GROUP Q — INTERACTIONS,Unique,discount_pct * promotion_flag,None (point-in-time product of valid features),Measures promotion depth intensity,CANDIDATE
+lead_time_x_volatility,GROUP Q — INTERACTIONS,Unique,lead_days * demand_cv_7,None (historical cv & supplier lead time),Safety stock buffering formula component,NEEDS ABLATION TEST
+reorder_gap_x_lead_time,GROUP Q — INTERACTIONS,Unique,reorder_gap / lead_days,None (point-in-time gap & lead time),Rate of inventory depletion per lead day,NEEDS ABLATION TEST
+overall_product_mean_demand,REJECTED CANDIDATES,Rejected,Mean product demand calculated across full dataset history,CRITICAL LEAKAGE: uses future August observations,Would contaminate early August predictions with end-of-August demand,REJECTED
+store_id_as_continuous,REJECTED CANDIDATES,Rejected,Treating store codes S01..S10 as continuous floating point numbers,Spurious correlation (no geometric ordering),"Store IDs are nominal categorical labels, not linear distances",REJECTED
+product_id_as_continuous,REJECTED CANDIDATES,Rejected,Treating product IDs P101..P220 as numeric continuum,Arbitrary ordering distortion,Product IDs are nominal keys; treating as numbers invalidates distance metrics,REJECTED
+expected_closing,REJECTED CANDIDATES,Rejected,Formulaic expected closing inventory from ledger arithmetic,Collinearity and masks true inventory discrepancy,Phase 1 Leakage Classification explicitly marked as DO_NOT_USE_AS_FEATURE,REJECTED
+expiry_date_prediction,REJECTED CANDIDATES,Rejected,Predicting exact spoilage/expiry date of items on shelf,Fabricated signal (no batch-age metadata in data),Dataset lacks batch manufacturing dates; replaced with Shelf-Life Exposure,REJECTED
+model_expected_lost_revenue,REJECTED CANDIDATES,Rejected,Stockout probability multiplied by forecasted revenue loss,Premature circular dependency on ML models not yet trained,Belongs strictly to Phase 4 inference and Phase 5 decision engine,REJECTED
+unbounded_inventory_ratios,REJECTED CANDIDATES,Rejected,Raw closing / demand ratios producing division-by-zero inf,Numerical instability crashing ML tree algorithms,Replaced with safe-division logic and operational caps (365 days),REJECTED
+arbitrary_transfer_decision,REJECTED CANDIDATES,Rejected,Hardcoded lateral transfer commands between stores,Out of scope for feature engineering,Transfer recommendation logic belongs to Phase 5 optimization,REJECTED
+weather_interaction_explosion,REJECTED CANDIDATES,Rejected,"Exhaustive cross-products of weather, city, category, and hour",Overfitting and curse of dimensionality,Phase 2 EDA showed modest weather correlations; feature explosion rejected,REJECTED

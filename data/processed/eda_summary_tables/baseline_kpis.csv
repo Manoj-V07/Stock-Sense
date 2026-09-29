@@ -1,0 +1,8 @@
+kpi,value,definition
+Revenue,49067973.0,Sum of aggregated transaction revenue
+Units sold,288761.0,Sum of transaction_demand
+Stock-out rate,0.0015231567423485172,Observed closing <= 0 / rows with closing inventory
+Inventory turnover,7683.457663387662,COGS using inventory_sold x cost / mean closing inventory value; inventory rows only
+Days of inventory,130.17397014251625,Closing stock / same-row transaction demand; positive-demand rows only
+Promotion lift,2.4261467362117943,"Mean row demand promoted vs normal minus 1; association, not causation"
+Estimated lost sales,39456.88102240896,Observed stock-out rows x transaction demand x average selling price; descriptive proxy

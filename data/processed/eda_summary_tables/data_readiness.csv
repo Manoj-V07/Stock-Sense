@@ -1,0 +1,15 @@
+metric,value
+rows,29079
+columns,72
+date_min,2026-07-31 00:00:00
+date_max,2026-09-01 00:00:00
+unique_stores,10
+unique_products,120
+unique_date_store_product,29079
+duplicate_grains,0
+missing_cells,265436
+demand_coverage_rows,29079
+inventory_coverage_rows,21009
+external_coverage_rows,28983
+categorical_category_levels,9
+categorical_store_type_levels,3

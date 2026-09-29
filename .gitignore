@@ -12,3 +12,6 @@ build/
 *.log
 src/data_pipeline/cleaning_pipeline_draft.txt
 src/data_pipeline/test_write.py
+
+# Generated model artifacts are stored outside the Git repository.
+models/**/*.pkl

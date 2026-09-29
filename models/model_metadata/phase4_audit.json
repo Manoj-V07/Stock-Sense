@@ -1,0 +1,21 @@
+{
+  "rows": 29079,
+  "unique_date_store_product": true,
+  "target_demand_missing": 5611,
+  "target_stockout_missing": 8070,
+  "future_feature_leakage": "No future target columns are used as predictors; targets were quarantined from feature matrix.",
+  "date_range": [
+    "2026-07-31 00:00:00",
+    "2026-09-01 00:00:00"
+  ],
+  "infinite_values": 0,
+  "missing_numeric_count": 289346,
+  "stockout_rate": 0.0015231567423485172,
+  "assertions": [
+    "Feature dataset exists at data/processed/features/feature_master.csv.",
+    "Duplicate Date \u00d7 Store \u00d7 Product rows: 0.",
+    "Future targets are excluded from inputs.",
+    "Missing values are retained as NaN and imputed only on train data.",
+    "Infinite values were checked and treated as missing before modelling."
+  ]
+}

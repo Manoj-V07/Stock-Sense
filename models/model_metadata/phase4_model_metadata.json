@@ -1,0 +1,86 @@
+{
+  "demand_model": {
+    "algorithm": "RandomForestRegressor",
+    "feature_groups": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "training_window": {
+      "start": "2026-07-31 00:00:00",
+      "end": "2026-08-14 00:00:00"
+    },
+    "validation_window": {
+      "start": "2026-08-15 00:00:00",
+      "end": "2026-08-19 00:00:00"
+    },
+    "test_window": {
+      "start": "2026-08-20 00:00:00",
+      "end": "2026-08-25 00:00:00"
+    },
+    "selected_metrics": {
+      "model_name": "RandomForestRegressor",
+      "train_dates": "2026-07-31 00:00:00 to 2026-08-14 00:00:00",
+      "validation_dates": "2026-08-15 00:00:00 to 2026-08-19 00:00:00",
+      "test_dates": "2026-08-20 00:00:00 to 2026-08-25 00:00:00",
+      "val_mae": 9.689347453050939,
+      "val_rmse": 14.389293722393466,
+      "val_mape": 151853748688339.75,
+      "val_r2": 0.9793352470286175,
+      "test_mae": 11.702694252873563,
+      "test_rmse": 17.896166315347,
+      "test_mape": 200286344383141.16,
+      "test_r2": 0.9651380313103923
+    },
+    "baseline_metrics": {
+      "baseline_val_mae": 56.228454430911384,
+      "baseline_val_rmse": 103.39083693776728,
+      "baseline_val_mape": 51720555509427.06,
+      "baseline_val_r2": -0.06687948549489908,
+      "baseline_test_mae": 54.12959412235274,
+      "baseline_test_rmse": 98.39358283729621,
+      "baseline_test_mape": 56737277609440.38,
+      "baseline_test_r2": -0.05381759171195455
+    }
+  },
+  "stockout_model": {
+    "algorithm": "DecisionTreeClassifier",
+    "feature_groups": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "training_window": {
+      "start": "2026-07-31 00:00:00",
+      "end": "2026-08-14 00:00:00"
+    },
+    "validation_window": {
+      "start": "2026-08-15 00:00:00",
+      "end": "2026-08-19 00:00:00"
+    },
+    "test_window": {
+      "start": "2026-08-20 00:00:00",
+      "end": "2026-08-25 00:00:00"
+    },
+    "selected_metrics": {
+      "model_name": "DecisionTreeClassifier",
+      "train_dates": "2026-08-01 00:00:00 to 2026-08-18 00:00:00",
+      "validation_dates": "2026-08-19 00:00:00 to 2026-08-24 00:00:00",
+      "test_dates": "2026-08-25 00:00:00 to 2026-08-31 00:00:00",
+      "val_accuracy": 1.0,
+      "val_precision": 1.0,
+      "val_recall": 1.0,
+      "val_f1": 1.0,
+      "val_roc_auc": 1.0,
+      "test_accuracy": 1.0,
+      "test_precision": 1.0,
+      "test_recall": 1.0,
+      "test_f1": 1.0,
+      "test_roc_auc": 1.0
+    }
+  }
+}

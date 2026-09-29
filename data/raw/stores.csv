@@ -1,0 +1,11 @@
+store_id,city,store_type,floor_area_sqft,avg_daily_customers,region
+S01,Coimbatore,Supermarket,8500,1250,West
+S02,Chennai,Hypermarket,18000,2850,North
+S03,Madurai,Express,4200,720,South
+S04,Salem,Supermarket,7600,1080,Central
+S05,Tiruchirappalli,Hypermarket,14500,2100,Central
+S06,Erode,Supermarket,6800,980,West
+S07,Tiruppur,Express,5000,850,West
+S08,Tirunelveli,Supermarket,7900,1120,South
+S09,Vellore,Hypermarket,13200,1950,North
+S10,Thanjavur,Supermarket,7200,1010,East

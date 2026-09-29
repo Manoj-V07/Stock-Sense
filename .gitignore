@@ -1,0 +1,14 @@
+﻿# .gitignore for StockSense
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv
+venv/
+*.egg-info/
+dist/
+build/
+.ipynb_checkpoints/
+*.log
+src/data_pipeline/cleaning_pipeline_draft.txt
+src/data_pipeline/test_write.py

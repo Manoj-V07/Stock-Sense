@@ -1,0 +1,41 @@
+dataset,row_id,field,old_value,new_value,reason
+products,cat=beverage,category,beverage,Beverages,Standardised 'beverage'
+products,cat=BEVERAGES,category,BEVERAGES,Beverages,Standardised 'BEVERAGES'
+products,cat=DAIRY,category,DAIRY,Dairy,Standardised 'DAIRY'
+products,cat=SNACKS,category,SNACKS,Snacks,Standardised 'SNACKS'
+products,cat=household,category,household,Household,Standardised 'household'
+products,cat=Staples ,category,Staples ,Staples,Standardised 'Staples '
+transactions,151903,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151904,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151905,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151906,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151907,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151908,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151909,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151910,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151911,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151912,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151913,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151914,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151915,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151916,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151917,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151918,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151919,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151920,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151921,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151922,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151923,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151924,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151925,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151926,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,151927,ALL,DUPLICATE,REMOVED,Exact dup row
+transactions,500,quantity,-4,FLAGGED,Non-positive qty
+transactions,10500,quantity,-2,FLAGGED,Non-positive qty
+transactions,40500,quantity,0,FLAGGED,Non-positive qty
+transactions,25000,selling_price,-20.0,FLAGGED,Negative price
+transactions,1200,discount_pct,110.0,nan,Invalid discount->NaN
+transactions,15500,discount_pct,-15.0,nan,Invalid discount->NaN
+transactions,16500,hour,27.0,nan,Invalid hour->NaN
+transactions,26500,hour,-3.0,nan,Invalid hour->NaN
+external_factors,244,city,ChennaI,Chennai,Typo correction

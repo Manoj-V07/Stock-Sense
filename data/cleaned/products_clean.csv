@@ -1,0 +1,121 @@
+product_id,category,sub_category,brand,mrp,cost_price,shelf_life_days,supplier_id,invalid_supplier_flag
+P101,Beverages,Soft Drinks,Coca-Cola,300.0,213.15,180,SUP01,0
+P102,Beverages,Biscuits,Pepsi,180.0,136.14,180,SUP02,0
+P103,Beverages,Cooking Oil,Sprite,60.0,41.11,365,SUP03,0
+P104,Personal Care,Detergent,Bisleri ,250.0,174.88,730,SUP04,0
+P105,Household,Air Freshener,Thums Up,40.0,28.29,365,SUP05,0
+P106,Dairy,Milk,Real,180.0,127.01,10,SUP06,0
+P107,Bakery,Cakes,Tropicana,400.0,331.0,7,SUP07,0
+P108,Frozen,Frozen Snacks,Maaza,500.0,429.0,180,SUP08,0
+P109,Fruits & Vegetables,Fruits,Paper Boat,900.0,619.97,5,SUP09,0
+P110,Beverages,Tea,Bisleri,60.0,50.22,180,SUP10,0
+P111,Snacks,Chips,Aquafina,30.0,25.08,180,SUP11,0
+P112,Staples,Salt,Kinley,650.0,444.95,365,SUP12,0
+P113,Personal Care,cookies,Tata Tea,80.0,50.3,730,SUP13,0
+P114,Household,Dishwash,Brooke Bond,220.0,154.6,365,SUP14,0
+P115,Dairy,Paneer,Bru,60.0,48.3,10,SUP15,0
+P116,Bakery,Rusk,Nescafe,60.0,42.35,7,SUP16,0
+P117,Frozen,Frozen Snacks,Red Bull,500.0,404.55,180,SUP17,0
+P118,Fruits & Vegetables,Vegetables,Monster,250.0,194.96,5,SUP18,0
+P119,Beverages,Soft Drinks,Lay's,100.0,68.41,180,SUP19,0
+P120,Snacks,Cookies,Bingo,100.0,75.66,180,SUP20,0
+P121,Snacks,Spices,Kurkure,250.0,139.16,365,SUP21,0
+P122,Personal Care,Detergent,Britannia,150.0,117.78,730,SUP22,0
+P123,Household,Air Freshener,Parle,120.0,78.4,365,SUP23,0
+P124,Dairy,Cheese,Sunfeast,650.0,496.47,10,SUP24,0
+P125,Bakery,Bread,Oreo,650.0,398.01,7,SUP25,0
+P126,Frozen,Frozen Snacks,COLGATE,20.0,17.01,180,SUP26,0
+P127,Fruits & Vegetables,Fruits,Balaji,80.0,47.37,5,SUP27,0
+P128,Beverages,Tea,Cadbury,80.0,46.25,180,SUP28,0
+P129,Snacks,Chocolate,Nestle,500.0,286.36,180,SUP29,0
+P130,Staples,Wheat Flour,Ferrero,80.0,50.26,365,SUP30,0
+P131,Personal Care,Shampoo,India Gate,120.0,89.69,730,SUP31,0
+P132,Household,Dishwash,Daawat,100.0,60.01,365,SUP32,0
+P133,Dairy,Butter,Ponni,180.0,134.26,10,SUP33,0
+P134,Bakery,Buns,Fortune,400.0,284.08,7,SUP34,0
+P135,Frozen,Frozen Snacks,Aashirvaad,180.0,144.4,180,SUP35,0
+P136,Staples,Vegetables,Pillsbury,60.0,44.37,5,SUP01,0
+P137,Beverages,Soft Drinks,Saffola,50.0,42.76,180,SUP02,0
+P138,Snacks,Namkeen,Gold Winner,400.0,332.21,180,SUP03,0
+P139,Staples,Sugar,Madhur,180.0,149.13,365,SUP04,0
+P140,Personal Care,Detergent,Tata Salt,650.0,510.46,730,SUP05,0
+P141,Household,Air Freshener,Surfexcel,900.0,524.37,365,SUP06,0
+P142,Dairy,Curd,Everest,30.0,17.89,10,SUP07,0
+P143,Bakery,Cakes,MDH,30.0,18.97,7,SUP08,0
+P144,Frozen,Frozen Snacks,Dove,120.0,70.64,180,SUP09,0
+P145,Fruits & Vegetables,Fruits,Clinic Plus,650.0,410.71,5,SUP10,0
+P146,Beverages,Tea,Pantene,400.0,301.52,180,SUP11,0
+P147,Snacks,Biscuits,Sunsilk,150.0,88.59,180,SUP12,0
+P148,Staples,Dal,Pears,60.0,42.11,365,SUP13,0
+P149,Personal Care,Shampoo,Lux,400.0,316.72,730,SUP14,0
+P150,Household,Dishwash,Santoor,40.0,22.74,365,SUP15,0
+P151,Dairy,Milk,Lifebuoy,120.0,85.97,10,SUP999,1
+P152,Bakery,Rusk,Colgate,40.0,32.32,7,SUP17,0
+P153,Frozen,Frozen Snacks,Pepsodent,400.0,228.13,180,SUP18,0
+P154,Fruits & Vegetables,Vegetables,Closeup,250.0,159.3,5,SUP19,0
+P155,Beverages,Soft Drinks,Sensodyne,60.0,40.85,180,SUP20,0
+P156,Snacks,Chips,Surf Excel,180.0,122.97,180,SUP21,0
+P157,Staples,Rice,Ariel,100.0,78.26,365,SUP22,0
+P158,Personal Care,Detergent,Tide,180.0,107.54,730,SUP23,0
+P159,Household,Air Freshener,Rin,80.0,67.56,365,SUP24,0
+P160,Dairy,Paneer,Himalaya,20.0,11.01,10,SUP25,0
+P161,Household,Bread,Pond's,250.0,150.26,7,SUP26,0
+P162,Frozen,Frozen Snacks,Garnier,80.0,51.36,180,SUP27,0
+P163,Fruits & Vegetables,Fruits,Nivea,80.0,52.96,5,SUP28,0
+P164,Beverages,Tea,Vaseline,220.0,158.8,180,SUP29,0
+P165,Snacks,Cookies,Lizol,80.0,60.43,180,SUP30,0
+P166,Staples,Cooking Oil,Harpic,60.0,37.54,365,SUP31,0
+P167,Personal Care,Shampoo,Domex,150.0,91.27,730,SUP32,0
+P168,Household,Dishwash,Vim,30.0,23.53,365,SUP33,0
+P169,Dairy,Cheese,Pril,120.0,100.8,10,SUP34,0
+P170,Bakery,Buns,Exo,30.0,25.53,7,SUP35,0
+P171,Frozen,Frozen Snacks,Origami,500.0,286.21,180,SUP01,0
+P172,Fruits & Vegetables,Vegetables,Presto,650.0,384.98,5,SUP02,0
+P173,Beverages,Soft Drinks,Godrej,50.0,42.58,180,SUP03,0
+P174,Snacks,Chocolate,Odonil,50.0,34.99,180,SUP04,0
+P175,Staples,Salt,Amul,100.0,74.63,365,SUP05,0
+P176,Personal Care,Detergent,Aavin,50.0,34.97,730,SUP06,0
+P177,Household,Air Freshener,Heritage,180.0,111.88,365,SUP07,0
+P178,Dairy,Butter,Milky Mist,220.0,145.18,10,SUP08,0
+P179,Bakery,Cakes,Go Cheese,250.0,175.39,7,SUP09,0
+P180,Frozen,Frozen Snacks,Modern,30.0,17.43,180,SUP10,0
+P181,Dairy,Fruits,Monginis,400.0,220.96,5,SUP11,0
+P182,Beverages,Tea,Kwality Wall's,150.0,91.09,180,SUP12,0
+P183,Snacks,Namkeen,Arun,40.0,28.55,180,SUP13,0
+P184,Staples,Spices,McCain,30.0,23.19,365,SUP14,0
+P185,Personal Care,Shampoo,Safal,400.0,225.18,730,SUP15,0
+P186,Household,Dishwash,ITC,120.0,98.74,365,SUP16,0
+P187,Dairy,Curd,Local,30.0,25.56,10,SUP17,0
+P188,Bakery,Rusk,Farm Fresh,120.0,83.51,7,SUP18,0
+P189,Frozen,Frozen Snacks,Green Valley,500.0,347.58,180,SUP19,0
+P190,Fruits & Vegetables,Vegetables,Coca-Cola,900.0,648.77,5,SUP20,0
+P191,Beverages,Soft Drinks,Pepsi,120.0,88.81,180,SUP21,0
+P192,Snacks,Biscuits,Sprite,650.0,423.63,180,SUP22,0
+P193,Staples,Wheat Flour,Fanta,400.0,239.93,365,SUP23,0
+P194,Personal Care,Detergent,Thums Up,60.0,39.27,730,SUP24,0
+P195,Household,Air Freshener,Real,60.0,34.53,365,SUP25,0
+P196,Dairy,Milk,Tropicana,180.0,130.98,10,SUP26,0
+P197,Bakery,Bread,Maaza,60.0,37.8,7,SUP27,0
+P198,Frozen,Frozen Snacks,Paper Boat,150.0,99.04,180,SUP28,0
+P199,Fruits & Vegetables,Fruits,Bisleri,400.0,221.76,5,SUP29,0
+P200,Beverages,Tea,Aquafina,400.0,319.01,180,SUP30,0
+P201,Snacks,Chips,Kinley,300.0,173.99,180,SUP31,0
+P202,Staples,Sugar,Tata Tea,300.0,221.92,365,SUP32,0
+P203,Personal Care,Shampoo,Brooke Bond,220.0,145.11,730,SUP33,0
+P204,Household,Dishwash,Bru,180.0,112.69,365,SUP34,0
+P205,Dairy,Paneer,Nescafe,300.0,227.33,10,SUP35,0
+P206,Bakery,Buns,Red Bull,20.0,12.73,7,SUP01,0
+P207,Frozen,Frozen Snacks,Monster,30.0,22.08,180,SUP02,0
+P208,Fruits & Vegetables,Vegetables,Lay's,220.0,166.84,5,SUP03,0
+P209,Beverages,Soft Drinks,Bingo,40.0,27.13,180,SUP04,0
+P210,Snacks,Cookies,Kurkure,20.0,15.94,180,SUP05,0
+P211,Staples,Dal,Britannia,100.0,64.47,365,SUP06,0
+P212,Personal Care,Detergent,Parle,180.0,147.02,730,SUP07,0
+P213,Household,Air Freshener,Sunfeast,50.0,41.03,365,SUP08,0
+P214,Dairy,Cheese,Oreo,20.0,12.59,10,SUP09,0
+P215,Bakery,Cakes,Haldiram's,80.0,61.11,7,SUP10,0
+P216,Frozen,Frozen Snacks,Balaji,80.0,57.82,180,SUP11,0
+P217,Fruits & Vegetables,Fruits,Cadbury,650.0,510.04,5,SUP12,0
+P218,Beverages,Tea,Nestle,900.0,598.38,180,SUP13,0
+P219,Snacks,Chocolate,Ferrero,30.0,20.14,180,SUP14,0
+P220,Staples,Rice,India Gate,80.0,59.94,365,SUP15,0

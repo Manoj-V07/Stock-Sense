@@ -12,17 +12,18 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
-      --bg-base:       #060b14;
-      --bg-surface:    #0d1624;
-      --bg-elevated:   #111d30;
-      --bg-card:       #141f33;
-      --bg-hover:      #1a2740;
+      --bg-base:       #f4f7fb;
+      --bg-surface:    #ffffff;
+      --bg-elevated:   #eef3f9;
+      --bg-card:       #ffffff;
+      --bg-hover:      #edf4ff;
 
-      --border:        rgba(99,163,255,0.12);
-      --border-strong: rgba(99,163,255,0.22);
+      --border:        rgba(46, 80, 120, 0.14);
+      --border-strong: rgba(46, 80, 120, 0.24);
 
       --accent:        #3b82f6;
       --accent-dim:    rgba(59,130,246,0.15);
@@ -38,10 +39,10 @@
       --emerald:       #10b981;
       --emerald-dim:   rgba(16,185,129,0.15);
 
-      --text-primary:  #e2ecff;
-      --text-secondary:#8aa4cc;
-      --text-muted:    #4a6080;
-      --text-dim:      #2d4060;
+      --text-primary:  #172033;
+      --text-secondary:#52627a;
+      --text-muted:    #718096;
+      --text-dim:      #9aa7b8;
 
       --radius:        12px;
       --radius-lg:     18px;
@@ -109,6 +110,7 @@
       font-size: 18px; font-weight: 800;
       background: linear-gradient(135deg, var(--text-primary), var(--accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: -0.3px;
     }
     .sidebar-logo .brand-sub {
@@ -140,7 +142,10 @@
       background: var(--accent-dim); color: var(--accent);
       border-color: rgba(59,130,246,0.3);
     }
-    .nav-item .nav-icon { font-size: 16px; flex-shrink: 0; width: 18px; text-align: center; }
+    .nav-item .nav-icon {
+      width: 18px; height: 18px; flex-shrink: 0;
+      stroke-width: 1.8; color: currentColor;
+    }
     .nav-badge {
       margin-left: auto; background: var(--rose); color: #fff;
       font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
@@ -168,7 +173,7 @@
     /* ─── TOPBAR ─────────────────────────────────────────────── */
     .topbar {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(6,11,20,0.85);
+      background: rgba(255,255,255,0.88);
       backdrop-filter: blur(24px) saturate(1.5);
       border-bottom: 1px solid var(--border);
       padding: 0 32px;
@@ -205,6 +210,7 @@
       font-size: 22px; font-weight: 800;
       background: linear-gradient(135deg, var(--text-primary) 60%, var(--accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: -0.5px;
     }
     .section-desc {
@@ -492,7 +498,7 @@
     [data-tooltip]:hover::after {
       content: attr(data-tooltip);
       position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-      background: #1a2740; border: 1px solid var(--border-strong);
+      background: #ffffff; border: 1px solid var(--border-strong);
       color: var(--text-primary); font-size: 11px; white-space: nowrap;
       padding: 5px 10px; border-radius: 6px; pointer-events: none;
       z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
@@ -538,38 +544,38 @@
   <nav class="sidebar-nav">
     <div class="nav-section-label">Overview</div>
     <a class="nav-item active" data-section="overview" onclick="navigate(this)">
-      <span class="nav-icon">⬛</span> Executive Dashboard
+      <i class="nav-icon" data-lucide="layout-dashboard" aria-hidden="true"></i> Executive Dashboard
     </a>
     <a class="nav-item" data-section="pipeline" onclick="navigate(this)">
-      <span class="nav-icon">⚙️</span> AI Pipeline
+      <i class="nav-icon" data-lucide="workflow" aria-hidden="true"></i> AI Pipeline
     </a>
 
     <div class="nav-section-label">Analytics</div>
     <a class="nav-item" data-section="eda" onclick="navigate(this)">
-      <span class="nav-icon">📊</span> Demand Intelligence
+      <i class="nav-icon" data-lucide="chart-no-axes-combined" aria-hidden="true"></i> Demand Intelligence
     </a>
     <a class="nav-item" data-section="stockout" onclick="navigate(this)">
-      <span class="nav-icon">🔥</span> Stock-out Risk
+      <i class="nav-icon" data-lucide="triangle-alert" aria-hidden="true"></i> Stock-out Risk
     </a>
     <a class="nav-item" data-section="promotions" onclick="navigate(this)">
-      <span class="nav-icon">🎯</span> Promotion Lift
+      <i class="nav-icon" data-lucide="badge-percent" aria-hidden="true"></i> Promotion Lift
     </a>
 
     <div class="nav-section-label">Models</div>
     <a class="nav-item" data-section="models" onclick="navigate(this)">
-      <span class="nav-icon">🧠</span> Model Benchmark
+      <i class="nav-icon" data-lucide="brain-circuit" aria-hidden="true"></i> Model Benchmark
     </a>
     <a class="nav-item" data-section="stats" onclick="navigate(this)">
-      <span class="nav-icon">📐</span> Statistical Tests
+      <i class="nav-icon" data-lucide="sigma" aria-hidden="true"></i> Statistical Tests
     </a>
 
     <div class="nav-section-label">Operations</div>
     <a class="nav-item" data-section="decisions" onclick="navigate(this)">
-      <span class="nav-icon">🎛️</span> Decision Engine
+      <i class="nav-icon" data-lucide="sliders-horizontal" aria-hidden="true"></i> Decision Engine
       <span class="nav-badge" id="risk-badge">1</span>
     </a>
     <a class="nav-item" data-section="inventory" onclick="navigate(this)">
-      <span class="nav-icon">📦</span> Reorder Intelligence
+      <i class="nav-icon" data-lucide="package-check" aria-hidden="true"></i> Reorder Intelligence
     </a>
   </nav>
 
@@ -781,7 +787,7 @@
     </div>
 
     <div class="insight-banner">
-      <div class="insight-icon">💡</div>
+      <div class="insight-icon">i</div>
       <div>
         <div class="insight-title">Full-Stack ML Pipeline</div>
         <div class="insight-body">5 raw data sources → 277 analytical features → 2 production models → 5,655 daily decision recommendations. Each step enforces strict data lineage and anti-leakage controls.</div>
@@ -792,37 +798,37 @@
       <div class="card-inner">
         <div class="pipeline">
           <div class="pipeline-step">
-            <div class="pipeline-node done">🗄️</div>
+            <div class="pipeline-node done">DB</div>
             <div class="pipeline-node-label">Phase 1</div>
             <div class="pipeline-node-sub">Data Quality<br/>& Audit</div>
           </div>
           <div class="pipeline-arrow">→</div>
           <div class="pipeline-step">
-            <div class="pipeline-node done">📊</div>
+            <div class="pipeline-node done">DI</div>
             <div class="pipeline-node-label">Phase 2</div>
             <div class="pipeline-node-sub">EDA &<br/>Statistics</div>
           </div>
           <div class="pipeline-arrow">→</div>
           <div class="pipeline-step">
-            <div class="pipeline-node done">⚙️</div>
+            <div class="pipeline-node done">FE</div>
             <div class="pipeline-node-label">Phase 3</div>
             <div class="pipeline-node-sub">Feature<br/>Engineering</div>
           </div>
           <div class="pipeline-arrow">→</div>
           <div class="pipeline-step">
-            <div class="pipeline-node done">🧠</div>
+            <div class="pipeline-node done">ML</div>
             <div class="pipeline-node-label">Phase 4</div>
             <div class="pipeline-node-sub">ML Modeling<br/>& Validation</div>
           </div>
           <div class="pipeline-arrow">→</div>
           <div class="pipeline-step">
-            <div class="pipeline-node done">🎛️</div>
+            <div class="pipeline-node done">DE</div>
             <div class="pipeline-node-label">Phase 5</div>
             <div class="pipeline-node-sub">Decision<br/>Engine</div>
           </div>
           <div class="pipeline-arrow">→</div>
           <div class="pipeline-step">
-            <div class="pipeline-node done">📈</div>
+            <div class="pipeline-node done">UI</div>
             <div class="pipeline-node-label">Phase 6</div>
             <div class="pipeline-node-sub">Dashboard<br/>Prototype</div>
           </div>
@@ -832,7 +838,7 @@
 
     <div class="grid-3" style="margin-bottom:20px;">
       <div class="card"><div class="card-inner">
-        <div class="chart-label" style="color:var(--teal)">📁 Phase 1 · Data Audit</div>
+        <div class="chart-label" style="color:var(--teal)">Phase 1 · Data Audit</div>
         <div style="margin-top:10px;">
           <div class="stat-row"><div class="stat-row-label">Raw Records Ingested</div><div class="stat-row-val">1,51,928 txns</div></div>
           <div class="stat-row"><div class="stat-row-label">Exact Duplicates Removed</div><div class="stat-row-val">25 rows</div></div>
@@ -843,7 +849,7 @@
         </div>
       </div></div>
       <div class="card"><div class="card-inner">
-        <div class="chart-label" style="color:var(--accent)">📊 Phase 2 · EDA & Stats</div>
+        <div class="chart-label" style="color:var(--accent)">Phase 2 · EDA & Stats</div>
         <div style="margin-top:10px;">
           <div class="stat-row"><div class="stat-row-label">Business Questions Answered</div><div class="stat-row-val">12</div></div>
           <div class="stat-row"><div class="stat-row-label">Stat Hypothesis Tests</div><div class="stat-row-val">3 formal tests</div></div>
@@ -854,7 +860,7 @@
         </div>
       </div></div>
       <div class="card"><div class="card-inner">
-        <div class="chart-label" style="color:var(--violet)">⚙️ Phase 3 · Features</div>
+        <div class="chart-label" style="color:var(--violet)">Phase 3 · Features</div>
         <div style="margin-top:10px;">
           <div class="stat-row"><div class="stat-row-label">Feature Groups Built</div><div class="stat-row-val">9 groups</div></div>
           <div class="stat-row"><div class="stat-row-label">Demand Features</div><div class="stat-row-val">lag-1/7/14, rolling</div></div>
@@ -868,7 +874,7 @@
 
     <div class="grid-2">
       <div class="card"><div class="card-inner">
-        <div class="chart-label" style="color:var(--amber)">🧠 Phase 4 · ML Modeling</div>
+        <div class="chart-label" style="color:var(--amber)">Phase 4 · ML Modeling</div>
         <div style="margin-top:10px;">
           <div class="stat-row"><div class="stat-row-label">Demand Models Evaluated</div><div class="stat-row-val">6 algorithms</div></div>
           <div class="stat-row"><div class="stat-row-label">Stockout Models Evaluated</div><div class="stat-row-val">6 classifiers</div></div>
@@ -879,7 +885,7 @@
         </div>
       </div></div>
       <div class="card"><div class="card-inner">
-        <div class="chart-label" style="color:var(--rose)">🎛️ Phase 5 · Decision Engine</div>
+        <div class="chart-label" style="color:var(--rose)">Phase 5 · Decision Engine</div>
         <div style="margin-top:10px;">
           <div class="stat-row"><div class="stat-row-label">SKU-Day Decisions</div><div class="stat-row-val">5,655 rows</div></div>
           <div class="stat-row"><div class="stat-row-label">Safety Stock Algorithm</div><div class="stat-row-val">Demand σ × Lead time</div></div>
@@ -956,7 +962,7 @@
     </div>
 
     <div class="insight-banner">
-      <div class="insight-icon">⚠️</div>
+      <div class="insight-icon">!</div>
       <div>
         <div class="insight-title">Key Finding: Systemic, Not Promotional</div>
         <div class="insight-body">Chi-square test (p = 0.321) confirms stock-outs occur independently of promotional activity. This points to lead-time and reorder-point misalignment — not demand spikes — as the root cause across all store formats.</div>
@@ -1020,7 +1026,7 @@
     </div>
 
     <div class="insight-banner" style="background:var(--emerald-dim); border-color:rgba(16,185,129,0.25);">
-      <div class="insight-icon">✅</div>
+      <div class="insight-icon">OK</div>
       <div>
         <div class="insight-title" style="color:var(--emerald)">H₀ Rejected · Promotions Significantly Drive Demand</div>
         <div class="insight-body">Mann-Whitney U statistic = 156,705,659; p ≈ 0. Cohen's d = 0.69 (medium-large effect). Beverages exhibit the highest promotional elasticity at +438% mean demand lift. Causal attribution requires controlled experimental design.</div>
@@ -1154,7 +1160,7 @@
     <!-- ABLATION TAB -->
     <div id="tab-ablation" style="display:none" class="animate-in">
       <div class="insight-banner" style="background:var(--violet-dim); border-color:rgba(139,92,246,0.25);">
-        <div class="insight-icon">🔬</div>
+        <div class="insight-icon">LAB</div>
         <div>
           <div class="insight-title" style="color:var(--violet);">Ablation Study · 5 Experiments</div>
           <div class="insight-body">Feature groups progressively added from Experiment A (22 baseline features) to Experiment E (57 full feature set). Each experiment uses identical chronological validation to isolate feature contribution.</div>
@@ -1259,7 +1265,7 @@
     </div>
 
     <div class="insight-banner" style="background:var(--teal-dim); border-color:rgba(20,184,166,0.25);">
-      <div class="insight-icon">📦</div>
+      <div class="insight-icon">RI</div>
       <div>
         <div class="insight-title" style="color:var(--teal)">Total Recommended Reorder: 1,44,472 units</div>
         <div class="insight-body">Safety stock computed per SKU-store pair using demand standard deviation and lead time. Prediction reliability score of 0.79 (HIGH confidence) validated across chronological train/test splits.</div>
@@ -1350,7 +1356,7 @@ const chartDefaults = {
   plugins: {
     legend: { display: false },
     tooltip: {
-      backgroundColor: '#141f33',
+      backgroundColor: '#ffffff',
       borderColor: 'rgba(99,163,255,0.3)',
       borderWidth: 1,
       titleColor: '#e2ecff',
@@ -1392,7 +1398,7 @@ function buildCatDonut() {
       datasets: [{
         data: values,
         backgroundColor: PALETTE,
-        borderColor: '#060b14',
+        borderColor: '#f4f7fb',
         borderWidth: 3,
         hoverOffset: 8,
       }]
@@ -1623,7 +1629,7 @@ function buildReconcDonut() {
       datasets: [{
         data: [26899, 4, 2, 2],
         backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#4a6080'],
-        borderColor: '#060b14', borderWidth: 3,
+        borderColor: '#f4f7fb', borderWidth: 3,
       }]
     },
     options: {
@@ -1793,7 +1799,7 @@ function buildStockoutByStore() {
 function buildStatTests() {
   const tests = STOCKSENSE_DATA.statistical_tests;
   const colors = { 'Reject': 'badge-high', 'Do not reject': 'badge-low' };
-  const icons = { 'Reject': '⚡', 'Do not reject': '✓' };
+  const icons = { 'Reject': '!', 'Do not reject': 'OK' };
   const html = tests.map((t, i) => {
     const p = parseFloat(t.p_value);
     const pDisplay = p < 0.001 ? '< 0.001' : p.toFixed(4);
@@ -1938,6 +1944,7 @@ function switchModelTab(btn, tab) {
   buildReorderTable();
   buildReorderByStore();
   buildForecastQuality();
+  lucide.createIcons();
 })();
 </script>
 

@@ -1,16 +1,16 @@
 check,status,detail
-Master grain unique,PASS,
-Required columns present,PASS,Missing: []
-No null dates,PASS,
-transaction_demand non-negative,PASS,
-Revenue non-negative,PASS,
-inventory_balance_gap present,PASS,
-reconciliation_status values valid,PASS,Unexpected: set()
-sparse_history_flag is binary,PASS,
-Raw files untouched (MD5),PASS,
-All cleaned files exist,PASS,
-All processed files exist,PASS,
-No future-derived columns,PASS,Found: []
-Product categories standardised,PASS,Bad: set()
-External city typo ('ChennaI') fixed,PASS,
-No null temp_c remaining,PASS,
+1. Master grain uniqueness (Date x Store x Product),PASS,
+2. Core analytical columns present,PASS,Missing: []
+3. Zero null dates,PASS,
+4. transaction_demand non-negative,PASS,
+5. revenue non-negative,PASS,
+6. inventory_balance_gap present,PASS,
+7. reconciliation_status values valid,PASS,Unexpected: set()
+8. sparse_history_flag is strictly binary,PASS,
+9. Raw source files untouched (MD5 Checksum),PASS,
+10. All cleaned dimension files exist,PASS,
+11. All processed artifacts exist,PASS,
+12. Zero future-derived lookahead columns,PASS,Found: []
+13. Product categories standardized,PASS,Bad: set()
+14. External city typo ('ChennaI') resolved,PASS,
+15. Zero missing temperature values,PASS,

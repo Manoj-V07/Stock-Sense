@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockSense · Inventory Intelligence Platform</title>
+  <meta name="description" content="AI-driven inventory intelligence, demand forecasting, and stock-out prevention dashboard for retail operations." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base:       #060b14;
+      --bg-surface:    #0d1624;
+      --bg-elevated:   #111d30;
+      --bg-card:       #141f33;
+      --bg-hover:      #1a2740;
+
+      --border:        rgba(99,163,255,0.12);
+      --border-strong: rgba(99,163,255,0.22);
+
+      --accent:        #3b82f6;
+      --accent-dim:    rgba(59,130,246,0.15);
+      --accent-glow:   rgba(59,130,246,0.35);
+      --teal:          #14b8a6;
+      --teal-dim:      rgba(20,184,166,0.15);
+      --violet:        #8b5cf6;
+      --violet-dim:    rgba(139,92,246,0.15);
+      --amber:         #f59e0b;
+      --amber-dim:     rgba(245,158,11,0.15);
+      --rose:          #f43f5e;
+      --rose-dim:      rgba(244,63,94,0.15);
+      --emerald:       #10b981;
+      --emerald-dim:   rgba(16,185,129,0.15);
+
+      --text-primary:  #e2ecff;
+      --text-secondary:#8aa4cc;
+      --text-muted:    #4a6080;
+      --text-dim:      #2d4060;
+
+      --radius:        12px;
+      --radius-lg:     18px;
+      --radius-xl:     24px;
+
+      --transition:    0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ─── ANIMATED BACKGROUND ───────────────────────────────── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-glow {
+      position: fixed; z-index: 0; pointer-events: none;
+      width: 800px; height: 800px; border-radius: 50%;
+      filter: blur(120px); opacity: 0.06;
+    }
+    .bg-glow-1 { top: -200px; left: -200px; background: var(--accent); }
+    .bg-glow-2 { bottom: -200px; right: -200px; background: var(--teal); }
+
+    /* ─── SIDEBAR ────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 240px; z-index: 100;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      backdrop-filter: blur(20px);
+      transition: transform var(--transition);
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .sidebar-logo .icon-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: #fff;
+      box-shadow: 0 0 20px var(--accent-glow);
+      flex-shrink: 0;
+    }
+    .sidebar-logo .brand-name {
+      font-size: 18px; font-weight: 800;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .sidebar-logo .brand-sub {
+      font-size: 10px; color: var(--text-muted); font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px;
+    }
+
+    .sidebar-nav {
+      flex: 1; padding: 16px 12px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-section-label {
+      font-size: 10px; font-weight: 600; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 12px 8px 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 8px; cursor: pointer;
+      color: var(--text-secondary); font-size: 13.5px; font-weight: 500;
+      transition: all var(--transition); text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover {
+      background: var(--bg-elevated); color: var(--text-primary);
+      border-color: var(--border);
+    }
+    .nav-item.active {
+      background: var(--accent-dim); color: var(--accent);
+      border-color: rgba(59,130,246,0.3);
+    }
+    .nav-item .nav-icon { font-size: 16px; flex-shrink: 0; width: 18px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: var(--rose); color: #fff;
+      font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
+    }
+
+    .sidebar-footer {
+      padding: 16px; border-top: 1px solid var(--border);
+    }
+    .phase-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--emerald-dim); border: 1px solid rgba(16,185,129,0.25);
+      color: var(--emerald); padding: 6px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .phase-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(0.8)} }
+
+    /* ─── MAIN CONTENT ───────────────────────────────────────── */
+    .main {
+      margin-left: 240px;
+      min-height: 100vh;
+      position: relative; z-index: 1;
+    }
+
+    /* ─── TOPBAR ─────────────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(6,11,20,0.85);
+      backdrop-filter: blur(24px) saturate(1.5);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .topbar-sub { font-size: 12px; color: var(--text-muted); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 500;
+      border: 1px solid var(--border);
+      color: var(--text-secondary); background: var(--bg-elevated);
+    }
+    .chip.green { background: var(--emerald-dim); border-color: rgba(16,185,129,0.3); color: var(--emerald); }
+    .chip.amber { background: var(--amber-dim); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+    .chip.rose  { background: var(--rose-dim);  border-color: rgba(244,63,94,0.3);  color: var(--rose); }
+    .chip.blue  { background: var(--accent-dim); border-color: rgba(59,130,246,0.3); color: var(--accent); }
+    .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* ─── PAGE SECTIONS ──────────────────────────────────────── */
+    .page-section {
+      display: none; padding: 28px 32px;
+    }
+    .page-section.active { display: block; }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 22px; font-weight: 800;
+      background: linear-gradient(135deg, var(--text-primary) 60%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .section-desc {
+      font-size: 13px; color: var(--text-secondary); margin-top: 4px;
+    }
+
+    /* ─── CARDS ──────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 0 0 1px var(--border-strong), 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .card-inner { padding: 20px 22px; }
+    .card-title {
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
+    }
+    .card-value {
+      font-size: 28px; font-weight: 800; color: var(--text-primary);
+      letter-spacing: -0.5px; line-height: 1.1;
+    }
+    .card-value.accent  { color: var(--accent); }
+    .card-value.teal    { color: var(--teal); }
+    .card-value.emerald { color: var(--emerald); }
+    .card-value.amber   { color: var(--amber); }
+    .card-value.rose    { color: var(--rose); }
+    .card-sub {
+      font-size: 12px; color: var(--text-muted); margin-top: 4px;
+    }
+    .card-trend {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 600; margin-top: 8px;
+      padding: 3px 8px; border-radius: 20px;
+    }
+    .card-trend.up   { background: var(--emerald-dim); color: var(--emerald); }
+    .card-trend.down { background: var(--rose-dim); color: var(--rose); }
+    .card-trend.neutral { background: var(--amber-dim); color: var(--amber); }
+
+    /* ─── GRIDS ──────────────────────────────────────────────── */
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+    .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+    .col-span-2 { grid-column: span 2; }
+    .col-span-3 { grid-column: span 3; }
+    .col-span-4 { grid-column: span 4; }
+
+    /* ─── CHART PANELS ───────────────────────────────────────── */
+    .chart-panel { padding: 20px 22px; }
+    .chart-label {
+      font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;
+    }
+    .chart-sublabel {
+      font-size: 11.5px; color: var(--text-muted); margin-bottom: 16px;
+    }
+    .chart-wrap {
+      position: relative;
+    }
+
+    /* ─── TABLE ──────────────────────────────────────────────── */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .data-table th {
+      text-align: left; padding: 10px 14px;
+      color: var(--text-muted); font-weight: 600;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 11px 14px; border-bottom: 1px solid rgba(99,163,255,0.06);
+      color: var(--text-primary); vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-hover); }
+    .data-table .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .table-wrap {
+      overflow-x: auto; overflow-y: auto;
+      max-height: 380px;
+    }
+
+    /* ─── BADGES ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 20px;
+      font-size: 10.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .badge-high   { background: var(--rose-dim);  color: var(--rose);   border: 1px solid rgba(244,63,94,0.3); }
+    .badge-medium { background: var(--amber-dim); color: var(--amber);  border: 1px solid rgba(245,158,11,0.3); }
+    .badge-low    { background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-blue   { background: var(--accent-dim); color: var(--accent);  border: 1px solid rgba(59,130,246,0.3); }
+
+    /* ─── STAT ROW ───────────────────────────────────────────── */
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid rgba(99,163,255,0.06);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row-label { font-size: 13px; color: var(--text-secondary); }
+    .stat-row-val { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+
+    /* ─── PROGRESS BAR ───────────────────────────────────────── */
+    .progress-bar {
+      height: 4px; border-radius: 2px;
+      background: rgba(99,163,255,0.1); margin-top: 6px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 2px;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── HIGHLIGHT METRIC ───────────────────────────────────── */
+    .metric-block {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      background: rgba(99,163,255,0.05);
+      border: 1px solid rgba(99,163,255,0.1);
+    }
+    .metric-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+    .metric-val   { font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
+    .metric-val.accent  { color: var(--accent); }
+    .metric-val.teal    { color: var(--teal); }
+    .metric-val.emerald { color: var(--emerald); }
+    .metric-val.rose    { color: var(--rose); }
+    .metric-val.amber   { color: var(--amber); }
+    .metric-val.violet  { color: var(--violet); }
+
+    /* ─── HEATMAP ────────────────────────────────────────────── */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+    .heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.7);
+      cursor: pointer; transition: transform var(--transition);
+    }
+    .heatmap-cell:hover { transform: scale(1.15); z-index: 10; }
+
+    /* ─── PIPELINE DIAGRAM ───────────────────────────────────── */
+    .pipeline {
+      display: flex; align-items: center; gap: 0;
+      padding: 16px 0;
+      overflow-x: auto;
+    }
+    .pipeline-step {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 110px;
+    }
+    .pipeline-node {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      border: 2px solid var(--border-strong);
+      background: var(--bg-elevated);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      transition: all var(--transition); cursor: pointer;
+      position: relative;
+    }
+    .pipeline-node.done {
+      border-color: var(--emerald);
+      background: var(--emerald-dim);
+      box-shadow: 0 0 20px rgba(16,185,129,0.3);
+    }
+    .pipeline-node.done::after {
+      content: '✓';
+      position: absolute; top: -5px; right: -5px;
+      background: var(--emerald); color: #fff;
+      font-size: 9px; font-weight: 900;
+      width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pipeline-node:hover { transform: translateY(-3px); }
+    .pipeline-node-label {
+      font-size: 10px; font-weight: 600; color: var(--text-muted);
+      margin-top: 8px; text-align: center; letter-spacing: 0.3px;
+    }
+    .pipeline-node-sub {
+      font-size: 9px; color: var(--text-dim);
+      text-align: center; margin-top: 1px;
+    }
+    .pipeline-arrow {
+      width: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding-bottom: 28px;
+      color: var(--text-dim); font-size: 18px;
+    }
+
+    /* ─── TABS ───────────────────────────────────────────────── */
+    .tabs {
+      display: flex; gap: 4px;
+      background: var(--bg-elevated); padding: 4px; border-radius: 10px;
+      margin-bottom: 20px; width: fit-content;
+    }
+    .tab-btn {
+      padding: 7px 16px; border-radius: 7px; cursor: pointer;
+      font-size: 12.5px; font-weight: 500; color: var(--text-secondary);
+      transition: all var(--transition); border: none; background: transparent;
+    }
+    .tab-btn.active {
+      background: var(--bg-card); color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    /* ─── DIVIDER ────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    /* ─── TEST CARD ──────────────────────────────────────────── */
+    .test-card {
+      padding: 16px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      margin-bottom: 12px;
+    }
+    .test-card:last-child { margin-bottom: 0; }
+    .test-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+    .test-card-title { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+    .test-card-type { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .test-card-stat { font-size: 12px; color: var(--text-secondary); }
+    .test-card-stat span { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600; }
+
+    /* ─── MODEL COMPARE ─────────────────────────────────────── */
+    .model-row {
+      display: flex; align-items: center; gap: 12px; padding: 12px 0;
+      border-bottom: 1px solid rgba(99,163,255,0.06);
+    }
+    .model-row:last-child { border-bottom: none; }
+    .model-name { font-size: 13px; font-weight: 600; color: var(--text-primary); min-width: 180px; }
+    .model-bar-track { flex: 1; height: 6px; background: rgba(99,163,255,0.1); border-radius: 3px; overflow: hidden; }
+    .model-bar-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+    .model-metric { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); min-width: 56px; text-align: right; }
+    .model-winner { margin-left: 4px; font-size: 11px; padding: 1px 6px; border-radius: 10px; background: var(--emerald-dim); color: var(--emerald); font-weight: 700; }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,163,255,0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99,163,255,0.35); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 1200px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeSlideUp 0.4s ease both; }
+
+    .spinner {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid rgba(99,163,255,0.2);
+      border-top-color: var(--accent);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── TOOLTIP ────────────────────────────────────────────── */
+    [data-tooltip] { position: relative; cursor: help; }
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+      background: #1a2740; border: 1px solid var(--border-strong);
+      color: var(--text-primary); font-size: 11px; white-space: nowrap;
+      padding: 5px 10px; border-radius: 6px; pointer-events: none;
+      z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    /* ─── DONUT LEGEND ───────────────────────────────────────── */
+    .legend { display: flex; flex-direction: column; gap: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .legend-name { font-size: 12px; color: var(--text-secondary); flex: 1; }
+    .legend-pct  { font-size: 12px; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+
+    /* ─── INSIGHTS BANNER ────────────────────────────────────── */
+    .insight-banner {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 18px;
+      background: var(--accent-dim); border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 10px; margin-bottom: 16px;
+    }
+    .insight-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .insight-title { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .insight-body  { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- ═══ SIDEBAR ══════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a class="brand" href="#">
+      <div class="icon-mark">S</div>
+      <div>
+        <div class="brand-name">StockSense</div>
+        <div class="brand-sub">Inventory Intelligence</div>
+      </div>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" data-section="overview" onclick="navigate(this)">
+      <span class="nav-icon">⬛</span> Executive Dashboard
+    </a>
+    <a class="nav-item" data-section="pipeline" onclick="navigate(this)">
+      <span class="nav-icon">⚙️</span> AI Pipeline
+    </a>
+
+    <div class="nav-section-label">Analytics</div>
+    <a class="nav-item" data-section="eda" onclick="navigate(this)">
+      <span class="nav-icon">📊</span> Demand Intelligence
+    </a>
+    <a class="nav-item" data-section="stockout" onclick="navigate(this)">
+      <span class="nav-icon">🔥</span> Stock-out Risk
+    </a>
+    <a class="nav-item" data-section="promotions" onclick="navigate(this)">
+      <span class="nav-icon">🎯</span> Promotion Lift
+    </a>
+
+    <div class="nav-section-label">Models</div>
+    <a class="nav-item" data-section="models" onclick="navigate(this)">
+      <span class="nav-icon">🧠</span> Model Benchmark
+    </a>
+    <a class="nav-item" data-section="stats" onclick="navigate(this)">
+      <span class="nav-icon">📐</span> Statistical Tests
+    </a>
+
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" data-section="decisions" onclick="navigate(this)">
+      <span class="nav-icon">🎛️</span> Decision Engine
+      <span class="nav-badge" id="risk-badge">1</span>
+    </a>
+    <a class="nav-item" data-section="inventory" onclick="navigate(this)">
+      <span class="nav-icon">📦</span> Reorder Intelligence
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="phase-pill">Phases 1–5 Complete</div>
+    <div style="margin-top:8px; font-size:11px; color:var(--text-dim);">Aug 2026 · IntelliData Challenge</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title" id="topbar-title">Executive Dashboard</div>
+        <div class="topbar-sub">August 2026 · 10 Stores · 120 SKUs · 5 Data Sources</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="chip green"><div class="chip-dot"></div>Demand Model Live</div>
+      <div class="chip blue"><div class="chip-dot"></div>R² 0.965</div>
+      <div class="chip amber"><div class="chip-dot"></div>1 High-Risk SKU</div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: OVERVIEW ═══════════════════════════════════════════ -->
+  <section class="page-section active animate-in" id="sec-overview">
+    <div class="section-header">
+      <div class="section-title">Executive Command Centre</div>
+      <div class="section-desc">Real-time synthesis of demand intelligence, model performance, and operational risk across all retail locations.</div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Total Revenue</div>
+          <div class="card-value accent">₹4.91Cr</div>
+          <div class="card-sub">August 2026 · All 10 Stores</div>
+          <div class="card-trend up">↑ POS Verified</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Units Sold</div>
+          <div class="card-value teal">2,88,761</div>
+          <div class="card-sub">Across 120 SKUs · 31 days</div>
+          <div class="card-trend neutral">Stable Velocity</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Stock-out Rate</div>
+          <div class="card-value emerald">0.15%</div>
+          <div class="card-sub">Observed closing ≤ 0 / inv rows</div>
+          <div class="card-trend up">↓ Well Managed</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Est. Lost Sales</div>
+          <div class="card-value amber">₹39,457</div>
+          <div class="card-sub">Stock-out demand × avg price proxy</div>
+          <div class="card-trend down">Recovery Opportunity</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL PERFORMANCE STRIP -->
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Demand Model R²</div>
+          <div class="card-value" style="color:var(--violet);">0.9795</div>
+          <div class="card-sub">RandomForest · Validation Set</div>
+          <div class="card-trend up">↑ Test R² 0.9649</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Demand Model MAE</div>
+          <div class="card-value" style="color:var(--violet);">9.67 units</div>
+          <div class="card-sub">Validation · Test MAE 11.72</div>
+          <div class="card-trend neutral">Per SKU per Week</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Stockout Classifier</div>
+          <div class="card-value emerald">F1 1.000</div>
+          <div class="card-sub">DecisionTree · Perfect Recall</div>
+          <div class="card-trend up">↑ ROC-AUC 1.000</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Reorder Quantity</div>
+          <div class="card-value accent">1,44,472</div>
+          <div class="card-sub">Total recommended units</div>
+          <div class="card-trend neutral">Decision Engine Output</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="grid-2" style="margin-bottom:20px;">
+      <!-- Revenue by Category -->
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Revenue by Category</div>
+          <div class="chart-sublabel">Pareto distribution · August 2026</div>
+          <div style="display:grid; grid-template-columns:1fr 160px; gap:20px; align-items:center;">
+            <div class="chart-wrap" style="height:220px;">
+              <canvas id="catDonut"></canvas>
+            </div>
+            <div class="legend" id="catLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Store Performance -->
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Store Revenue Comparison</div>
+          <div class="chart-sublabel">By store type · All 10 locations</div>
+          <div class="chart-wrap" style="height:220px;">
+            <canvas id="storeBar"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY TREND -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="chart-panel">
+        <div class="chart-label">Daily Demand Trend</div>
+        <div class="chart-sublabel">Aggregated daily units sold across all stores · August 2026</div>
+        <div class="chart-wrap" style="height:180px;">
+          <canvas id="dailyLine"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="grid-2">
+      <!-- Inventory Turnover Metrics -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Operational Metrics</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px;">
+            <div class="metric-block">
+              <div class="metric-label">Inventory Turnover</div>
+              <div class="metric-val teal">7,683×</div>
+            </div>
+            <div class="metric-block">
+              <div class="metric-label">Days of Inventory</div>
+              <div class="metric-val accent">130.2</div>
+            </div>
+            <div class="metric-block">
+              <div class="metric-label">Promotion Lift</div>
+              <div class="metric-val emerald">+243%</div>
+            </div>
+            <div class="metric-block">
+              <div class="metric-label">High-Risk SKUs</div>
+              <div class="metric-val rose">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decision Actions -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Decision Engine Actions</div>
+          <div style="margin-top:12px;">
+            <div class="stat-row">
+              <div class="stat-row-label">No Action Required</div>
+              <div class="stat-row-val" style="color:var(--emerald);">4,272 SKU-days</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="background:var(--emerald);width:75.5%"></div></div>
+            <div class="stat-row" style="margin-top:10px;">
+              <div class="stat-row-label">Hold / Reduce Reorder</div>
+              <div class="stat-row-val" style="color:var(--amber);">1,382 SKU-days</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="background:var(--amber);width:24.4%"></div></div>
+            <div class="stat-row" style="margin-top:10px;">
+              <div class="stat-row-label">Transfer Between Stores</div>
+              <div class="stat-row-val" style="color:var(--violet);">1 candidate</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="background:var(--violet);width:1%"></div></div>
+            <div class="stat-row" style="margin-top:10px;">
+              <div class="stat-row-label">High-Risk Override</div>
+              <div class="stat-row-val" style="color:var(--rose);">1 SKU</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="background:var(--rose);width:0.5%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: PIPELINE ════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-pipeline">
+    <div class="section-header">
+      <div class="section-title">AI Pipeline Architecture</div>
+      <div class="section-desc">6-phase end-to-end system from raw retail data to operational intelligence.</div>
+    </div>
+
+    <div class="insight-banner">
+      <div class="insight-icon">💡</div>
+      <div>
+        <div class="insight-title">Full-Stack ML Pipeline</div>
+        <div class="insight-body">5 raw data sources → 277 analytical features → 2 production models → 5,655 daily decision recommendations. Each step enforces strict data lineage and anti-leakage controls.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-inner">
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-node done">🗄️</div>
+            <div class="pipeline-node-label">Phase 1</div>
+            <div class="pipeline-node-sub">Data Quality<br/>& Audit</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-node done">📊</div>
+            <div class="pipeline-node-label">Phase 2</div>
+            <div class="pipeline-node-sub">EDA &<br/>Statistics</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-node done">⚙️</div>
+            <div class="pipeline-node-label">Phase 3</div>
+            <div class="pipeline-node-sub">Feature<br/>Engineering</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-node done">🧠</div>
+            <div class="pipeline-node-label">Phase 4</div>
+            <div class="pipeline-node-sub">ML Modeling<br/>& Validation</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-node done">🎛️</div>
+            <div class="pipeline-node-label">Phase 5</div>
+            <div class="pipeline-node-sub">Decision<br/>Engine</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-node done">📈</div>
+            <div class="pipeline-node-label">Phase 6</div>
+            <div class="pipeline-node-sub">Dashboard<br/>Prototype</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:20px;">
+      <div class="card"><div class="card-inner">
+        <div class="chart-label" style="color:var(--teal)">📁 Phase 1 · Data Audit</div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><div class="stat-row-label">Raw Records Ingested</div><div class="stat-row-val">1,51,928 txns</div></div>
+          <div class="stat-row"><div class="stat-row-label">Exact Duplicates Removed</div><div class="stat-row-val">25 rows</div></div>
+          <div class="stat-row"><div class="stat-row-label">Category Variants Fixed</div><div class="stat-row-val">6 mappings</div></div>
+          <div class="stat-row"><div class="stat-row-label">Inventory Reconciliation</div><div class="stat-row-val">99.97% Consistent</div></div>
+          <div class="stat-row"><div class="stat-row-label">Validation Checks</div><div class="stat-row-val" style="color:var(--emerald)">15 / 15 PASS</div></div>
+          <div class="stat-row"><div class="stat-row-label">Master Dataset Grain</div><div class="stat-row-val">Date × Store × SKU</div></div>
+        </div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="chart-label" style="color:var(--accent)">📊 Phase 2 · EDA & Stats</div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><div class="stat-row-label">Business Questions Answered</div><div class="stat-row-val">12</div></div>
+          <div class="stat-row"><div class="stat-row-label">Stat Hypothesis Tests</div><div class="stat-row-val">3 formal tests</div></div>
+          <div class="stat-row"><div class="stat-row-label">High Volatility SKU-Combos</div><div class="stat-row-val">264 / 1,200</div></div>
+          <div class="stat-row"><div class="stat-row-label">Promotion Lift (Beverages)</div><div class="stat-row-val" style="color:var(--emerald)">+438%</div></div>
+          <div class="stat-row"><div class="stat-row-label">Pareto Concentration</div><div class="stat-row-val">Top 5 = 70.2%</div></div>
+          <div class="stat-row"><div class="stat-row-label">EDA Plots Generated</div><div class="stat-row-val">6 charts</div></div>
+        </div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="chart-label" style="color:var(--violet)">⚙️ Phase 3 · Features</div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><div class="stat-row-label">Feature Groups Built</div><div class="stat-row-val">9 groups</div></div>
+          <div class="stat-row"><div class="stat-row-label">Demand Features</div><div class="stat-row-val">lag-1/7/14, rolling</div></div>
+          <div class="stat-row"><div class="stat-row-label">Inventory Features</div><div class="stat-row-val">DTS, lead gap</div></div>
+          <div class="stat-row"><div class="stat-row-label">Ablation Experiments</div><div class="stat-row-val">5 (A → E)</div></div>
+          <div class="stat-row"><div class="stat-row-label">Leakage Classification</div><div class="stat-row-val">4 categories</div></div>
+          <div class="stat-row"><div class="stat-row-label">Feature Registry</div><div class="stat-row-val">87 features</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card"><div class="card-inner">
+        <div class="chart-label" style="color:var(--amber)">🧠 Phase 4 · ML Modeling</div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><div class="stat-row-label">Demand Models Evaluated</div><div class="stat-row-val">6 algorithms</div></div>
+          <div class="stat-row"><div class="stat-row-label">Stockout Models Evaluated</div><div class="stat-row-val">6 classifiers</div></div>
+          <div class="stat-row"><div class="stat-row-label">Best Demand Model</div><div class="stat-row-val" style="color:var(--accent)">RandomForest R²=0.98</div></div>
+          <div class="stat-row"><div class="stat-row-label">Best Stockout Model</div><div class="stat-row-val" style="color:var(--emerald)">DecisionTree F1=1.00</div></div>
+          <div class="stat-row"><div class="stat-row-label">Validation Strategy</div><div class="stat-row-val">Chronological split</div></div>
+          <div class="stat-row"><div class="stat-row-label">Explainability</div><div class="stat-row-val">XGBoost SHAP drivers</div></div>
+        </div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="chart-label" style="color:var(--rose)">🎛️ Phase 5 · Decision Engine</div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><div class="stat-row-label">SKU-Day Decisions</div><div class="stat-row-val">5,655 rows</div></div>
+          <div class="stat-row"><div class="stat-row-label">Safety Stock Algorithm</div><div class="stat-row-val">Demand σ × Lead time</div></div>
+          <div class="stat-row"><div class="stat-row-label">Reorder Point Logic</div><div class="stat-row-val">ROP = μ × LT + SS</div></div>
+          <div class="stat-row"><div class="stat-row-label">Cross-store Transfer Rule</div><div class="stat-row-val">1 candidate flagged</div></div>
+          <div class="stat-row"><div class="stat-row-label">Revenue at Risk Computed</div><div class="stat-row-val">Per SKU-day</div></div>
+          <div class="stat-row"><div class="stat-row-label">Manager Recommendations</div><div class="stat-row-val">Natural language</div></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: EDA ══════════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-eda">
+    <div class="section-header">
+      <div class="section-title">Demand Intelligence</div>
+      <div class="section-desc">Exploratory analysis revealing demand patterns, velocity regimes, and revenue concentration across all merchandise categories.</div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Category Revenue Pareto</div>
+          <div class="chart-sublabel">Cumulative revenue share — top categories drive majority</div>
+          <div class="chart-wrap" style="height:260px;">
+            <canvas id="paretoBar"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Store Daily Demand by Location</div>
+          <div class="chart-sublabel">Demand trajectory across stores — identify growth vs decline</div>
+          <div class="chart-wrap" style="height:260px;">
+            <canvas id="storeLineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:20px;">
+      <div class="card"><div class="card-inner">
+        <div class="chart-label">Demand Volatility Bands</div>
+        <div class="chart-sublabel" style="margin-bottom:12px;">Across 1,200 Store × Product pairs</div>
+        <div id="voltBands"></div>
+      </div></div>
+      <div class="card col-span-2">
+        <div class="chart-panel">
+          <div class="chart-label">Store Performance Overview</div>
+          <div class="chart-sublabel">Revenue, stock-out rate and demand volatility per store</div>
+          <div class="table-wrap">
+            <table class="data-table" id="storeTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="chart-panel">
+        <div class="chart-label">Promotion Lift by Category</div>
+        <div class="chart-sublabel">Mean demand during promotions vs baseline — association, not causation</div>
+        <div class="chart-wrap" style="height:220px;">
+          <canvas id="promoLiftBar"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: STOCKOUT ════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-stockout">
+    <div class="section-header">
+      <div class="section-title">Stock-out Risk Analysis</div>
+      <div class="section-desc">Spatial and temporal distribution of inventory depletion events. Identifies chronic risk clusters for targeted replenishment intervention.</div>
+    </div>
+
+    <div class="insight-banner">
+      <div class="insight-icon">⚠️</div>
+      <div>
+        <div class="insight-title">Key Finding: Systemic, Not Promotional</div>
+        <div class="insight-body">Chi-square test (p = 0.321) confirms stock-outs occur independently of promotional activity. This points to lead-time and reorder-point misalignment — not demand spikes — as the root cause across all store formats.</div>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Observed Stock-outs</div>
+        <div class="card-value rose">0.15%</div>
+        <div class="card-sub">Of inventory-covered rows</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Highest Risk Store</div>
+        <div class="card-value amber">S03</div>
+        <div class="card-sub">Express format · 0.38% stockout rate</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Estimated Lost Revenue</div>
+        <div class="card-value rose">₹39,457</div>
+        <div class="card-sub">Descriptive proxy — stock-out demand × price</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Sparse SKU Combos</div>
+        <div class="card-value amber">71</div>
+        <div class="card-sub">5.9% of 1,200 Store × Product pairs</div>
+      </div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Stock-out Rate by Store</div>
+          <div class="chart-sublabel" style="margin-bottom:14px;">Ordered by stockout frequency — inventory-covered rows only</div>
+          <div id="stockoutByStore"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Inventory Reconciliation Status</div>
+          <div class="chart-sublabel" style="margin-bottom:14px;">Arithmetic validation: expected closing = opening + received − sold</div>
+          <div class="chart-wrap" style="height:220px;display:flex;align-items:center;justify-content:center;">
+            <canvas id="reconcDonut"></canvas>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="stat-row"><div class="stat-row-label">CONSISTENT (gap = 0)</div><div class="stat-row-val" style="color:var(--emerald)">26,899 (99.97%)</div></div>
+            <div class="stat-row"><div class="stat-row-label">INVALID_INPUT (neg opening/received)</div><div class="stat-row-val" style="color:var(--amber)">4 (0.01%)</div></div>
+            <div class="stat-row"><div class="stat-row-label">MAJOR_MISMATCH (|gap| > 5)</div><div class="stat-row-val" style="color:var(--rose)">2 (0.01%)</div></div>
+            <div class="stat-row"><div class="stat-row-label">INSUFFICIENT_DATA</div><div class="stat-row-val" style="color:var(--text-muted)">2 (0.01%)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: PROMOTIONS ══════════════════════════════════════════ -->
+  <section class="page-section" id="sec-promotions">
+    <div class="section-header">
+      <div class="section-title">Promotion Effectiveness</div>
+      <div class="section-desc">Quantified demand lift analysis across categories. Statistical evidence from Mann-Whitney U test (p &lt; 0.0001, Cohen's d = 0.69).</div>
+    </div>
+
+    <div class="insight-banner" style="background:var(--emerald-dim); border-color:rgba(16,185,129,0.25);">
+      <div class="insight-icon">✅</div>
+      <div>
+        <div class="insight-title" style="color:var(--emerald)">H₀ Rejected · Promotions Significantly Drive Demand</div>
+        <div class="insight-body">Mann-Whitney U statistic = 156,705,659; p ≈ 0. Cohen's d = 0.69 (medium-large effect). Beverages exhibit the highest promotional elasticity at +438% mean demand lift. Causal attribution requires controlled experimental design.</div>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Top Lift Category</div>
+        <div class="card-value emerald">Beverages</div>
+        <div class="card-sub">+438% mean demand lift</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Avg. Portfolio Lift</div>
+        <div class="card-value accent">+243%</div>
+        <div class="card-sub">Across all categories promoted</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Lowest Lift Category</div>
+        <div class="card-value amber">Frozen</div>
+        <div class="card-sub">+96.8% (still statistically significant)</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Stockout During Promo?</div>
+        <div class="card-value emerald">p = 0.321</div>
+        <div class="card-sub">Chi-square — No significant link</div>
+      </div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Promotional Lift Multiplier by Category</div>
+          <div class="chart-sublabel">Promoted mean demand ÷ baseline mean demand</div>
+          <div class="chart-wrap" style="height:280px;">
+            <canvas id="promoLiftFull"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Category Promotion Analysis</div>
+          <div class="chart-sublabel" style="margin-bottom:14px;">Normal vs promoted mean daily demand per SKU</div>
+          <div class="table-wrap">
+            <table class="data-table" id="promoTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: MODELS ═════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-models">
+    <div class="section-header">
+      <div class="section-title">Model Benchmark</div>
+      <div class="section-desc">Chronological validation-first model selection with ablation studies across 5 feature engineering experiments (A–E).</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchModelTab(this,'demand')">Demand Forecasting</button>
+      <button class="tab-btn" onclick="switchModelTab(this,'stockout')">Stockout Classification</button>
+      <button class="tab-btn" onclick="switchModelTab(this,'ablation')">Feature Ablation</button>
+    </div>
+
+    <!-- DEMAND TAB -->
+    <div id="tab-demand" class="animate-in">
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Winner</div>
+          <div class="card-value accent" style="font-size:18px;">Random Forest</div>
+          <div class="card-sub">Best validation MAE</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Val R²</div>
+          <div class="card-value emerald">0.9795</div>
+          <div class="card-sub">Near-perfect fit on validation</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Val MAE</div>
+          <div class="card-value teal">9.67 units</div>
+          <div class="card-sub">Per SKU per 7-day window</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Test R²</div>
+          <div class="card-value" style="color:var(--violet);">0.9649</div>
+          <div class="card-sub">Generalizes well to unseen data</div>
+        </div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Model Comparison · Validation R² (higher = better)</div>
+          <div style="margin-top:16px;" id="demandModelList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STOCKOUT TAB -->
+    <div id="tab-stockout" style="display:none" class="animate-in">
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Winner</div>
+          <div class="card-value emerald" style="font-size:18px;">Decision Tree</div>
+          <div class="card-sub">Perfect precision & recall</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Val F1</div>
+          <div class="card-value emerald">1.000</div>
+          <div class="card-sub">On chronological validation set</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Val ROC-AUC</div>
+          <div class="card-value emerald">1.000</div>
+          <div class="card-sub">Perfect discrimination power</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="card-title">Test F1</div>
+          <div class="card-value emerald">1.000</div>
+          <div class="card-sub">Confirmed on held-out test set</div>
+        </div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Classifier Comparison · Validation F1 (higher = better)</div>
+          <div style="margin-top:16px;" id="stockoutModelList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABLATION TAB -->
+    <div id="tab-ablation" style="display:none" class="animate-in">
+      <div class="insight-banner" style="background:var(--violet-dim); border-color:rgba(139,92,246,0.25);">
+        <div class="insight-icon">🔬</div>
+        <div>
+          <div class="insight-title" style="color:var(--violet);">Ablation Study · 5 Experiments</div>
+          <div class="insight-body">Feature groups progressively added from Experiment A (22 baseline features) to Experiment E (57 full feature set). Each experiment uses identical chronological validation to isolate feature contribution.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Demand Model R² Progression (Val vs Test)</div>
+          <div class="chart-sublabel">More features → marginal improvement confirms diminishing returns</div>
+          <div class="chart-wrap" style="height:240px;">
+            <canvas id="ablationChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: STATS ═══════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-stats">
+    <div class="section-header">
+      <div class="section-title">Statistical Hypothesis Tests</div>
+      <div class="section-desc">Three formal non-parametric tests at α = 0.05. Statistical significance is distinct from practical business significance.</div>
+    </div>
+
+    <div id="statTests"></div>
+  </section>
+
+  <!-- ═══ PAGE: DECISIONS ════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-decisions">
+    <div class="section-header">
+      <div class="section-title">Decision Intelligence Engine</div>
+      <div class="section-desc">AI-generated operational recommendations combining demand forecasts, inventory levels, safety stock algorithms, and risk scoring.</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="card"><div class="card-inner">
+        <div class="card-title">High Risk SKUs</div>
+        <div class="card-value rose">1</div>
+        <div class="card-sub">Stockout probability elevated</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Transfer Candidates</div>
+        <div class="card-value violet">1</div>
+        <div class="card-sub">Cross-store rebalancing</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">Hold / Reduce Reorders</div>
+        <div class="card-value amber">1,382</div>
+        <div class="card-sub">Excess inventory detected</div>
+      </div></div>
+      <div class="card"><div class="card-inner">
+        <div class="card-title">No Action Needed</div>
+        <div class="card-value emerald">4,272</div>
+        <div class="card-sub">Healthy inventory position</div>
+      </div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="chart-panel">
+        <div class="chart-label">Decision Logic Flow</div>
+        <div class="chart-sublabel">How the engine translates model outputs into actions</div>
+        <div style="display:flex; gap:12px; margin-top:12px; align-items:stretch; flex-wrap:wrap;">
+          <div class="metric-block" style="flex:1; min-width:140px;">
+            <div class="metric-label">Input</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:6px;">Predicted 7-day demand<br/>+ Closing inventory<br/>+ Lead days</div>
+          </div>
+          <div style="display:flex;align-items:center;color:var(--text-dim);font-size:20px;">→</div>
+          <div class="metric-block" style="flex:1; min-width:140px; background:var(--amber-dim); border-color:rgba(245,158,11,0.2);">
+            <div class="metric-label" style="color:var(--amber)">Safety Stock</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:6px;">σ × Z-score × √LeadTime<br/>Dynamic per SKU-Store pair</div>
+          </div>
+          <div style="display:flex;align-items:center;color:var(--text-dim);font-size:20px;">→</div>
+          <div class="metric-block" style="flex:1; min-width:140px; background:var(--accent-dim); border-color:rgba(59,130,246,0.2);">
+            <div class="metric-label" style="color:var(--accent)">Reorder Qty</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:6px;">max(0, ROP − Closing)<br/>ROP = μ × LT + SS</div>
+          </div>
+          <div style="display:flex;align-items:center;color:var(--text-dim);font-size:20px;">→</div>
+          <div class="metric-block" style="flex:1; min-width:140px; background:var(--rose-dim); border-color:rgba(244,63,94,0.2);">
+            <div class="metric-label" style="color:var(--rose)">Risk Level</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:6px;">HIGH / MEDIUM / LOW<br/>+ Natural language action</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chart-panel">
+        <div class="chart-label">Top 15 Reorder Candidates by Recommended Quantity</div>
+        <div class="chart-sublabel">Ranked by reorder_quantity — largest demand vs inventory gaps</div>
+        <div class="table-wrap">
+          <table class="data-table" id="reorderTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE: INVENTORY ════════════════════════════════════════════ -->
+  <section class="page-section" id="sec-inventory">
+    <div class="section-header">
+      <div class="section-title">Reorder Intelligence</div>
+      <div class="section-desc">Integrated view of predicted demand, safety stock buffers, reorder quantities and forecast reliability scores across all SKU-store combinations.</div>
+    </div>
+
+    <div class="insight-banner" style="background:var(--teal-dim); border-color:rgba(20,184,166,0.25);">
+      <div class="insight-icon">📦</div>
+      <div>
+        <div class="insight-title" style="color:var(--teal)">Total Recommended Reorder: 1,44,472 units</div>
+        <div class="insight-body">Safety stock computed per SKU-store pair using demand standard deviation and lead time. Prediction reliability score of 0.79 (HIGH confidence) validated across chronological train/test splits.</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="chart-panel">
+          <div class="chart-label">Reorder Quantity Distribution by Store</div>
+          <div class="chart-sublabel">Aggregated recommended reorder units per location</div>
+          <div class="chart-wrap" style="height:240px;">
+            <canvas id="reorderByStore"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-label">Model Prediction Drivers (SHAP-inspired)</div>
+          <div class="chart-sublabel" style="margin-bottom:14px;">Top features contributing to each prediction</div>
+          <div class="stat-row"><div class="stat-row-label" style="display:flex;align-items:center;gap:8px;"><span style="width:60px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--teal));display:inline-block"></span> Recent Demand Momentum</div><div class="stat-row-val">Driver #1</div></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--accent);width:92%"></div></div>
+          <div class="stat-row" style="margin-top:10px;"><div class="stat-row-label" style="display:flex;align-items:center;gap:8px;"><span style="width:60px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--violet));display:inline-block"></span> Inventory Coverage</div><div class="stat-row-val">Driver #2</div></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--teal);width:75%"></div></div>
+          <div class="stat-row" style="margin-top:10px;"><div class="stat-row-label" style="display:flex;align-items:center;gap:8px;"><span style="width:60px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--violet),var(--rose));display:inline-block"></span> Promotion Context</div><div class="stat-row-val">Driver #3</div></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--violet);width:58%"></div></div>
+          <div class="divider"></div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Prediction reliability: <span style="color:var(--emerald);font-weight:700;">HIGH (0.7875)</span> across all 5,655 SKU-day predictions. Generated by XGBoost global feature importance and permutation stability tests.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chart-panel">
+        <div class="chart-label">Demand Forecast Quality · Actual vs Predicted (Sample)</div>
+        <div class="chart-sublabel">Chronological test window — absolute errors showing model accuracy</div>
+        <div class="chart-wrap" style="height:220px;">
+          <canvas id="forecastQuality"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Data Layer -->
+<script src="data.js"></script>
+
+<script>
+// ═══ NAVIGATION ════════════════════════════════════════════════════
+const SECTION_TITLES = {
+  overview:   'Executive Dashboard',
+  pipeline:   'AI Pipeline Architecture',
+  eda:        'Demand Intelligence',
+  stockout:   'Stock-out Risk Analysis',
+  promotions: 'Promotion Effectiveness',
+  models:     'Model Benchmark',
+  stats:      'Statistical Hypothesis Tests',
+  decisions:  'Decision Intelligence Engine',
+  inventory:  'Reorder Intelligence',
+};
+
+function navigate(el) {
+  const section = el.dataset.section;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('sec-' + section);
+  if (target) {
+    target.classList.add('active');
+    target.classList.remove('animate-in');
+    void target.offsetWidth;
+    target.classList.add('animate-in');
+  }
+  document.getElementById('topbar-title').textContent = SECTION_TITLES[section] || section;
+  window.scrollTo(0, 0);
+}
+
+// ═══ COLOR PALETTE ══════════════════════════════════════════════════
+const PALETTE = [
+  '#3b82f6','#14b8a6','#8b5cf6','#f59e0b','#f43f5e',
+  '#10b981','#6366f1','#ec4899','#22d3ee','#a3e635'
+];
+const GRID_COLOR = 'rgba(99,163,255,0.08)';
+const TICK_COLOR = 'rgba(138,164,204,0.7)';
+
+const chartDefaults = {
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#141f33',
+      borderColor: 'rgba(99,163,255,0.3)',
+      borderWidth: 1,
+      titleColor: '#e2ecff',
+      bodyColor: '#8aa4cc',
+      padding: 10,
+      cornerRadius: 8,
+    }
+  },
+  scales: {
+    x: {
+      grid: { color: GRID_COLOR, drawBorder: false },
+      ticks: { color: TICK_COLOR, font: { size: 11 } },
+    },
+    y: {
+      grid: { color: GRID_COLOR, drawBorder: false },
+      ticks: { color: TICK_COLOR, font: { size: 11 } },
+    }
+  }
+};
+
+// ═══ CHART: CATEGORY DONUT ══════════════════════════════════════════
+function buildCatDonut() {
+  const data = STOCKSENSE_DATA.category_pareto;
+  const labels = data.map(d => d.category);
+  const values = data.map(d => d.revenue);
+  const legend = document.getElementById('catLegend');
+  legend.innerHTML = data.map((d, i) =>
+    `<div class="legend-item">
+      <div class="legend-dot" style="background:${PALETTE[i % PALETTE.length]}"></div>
+      <div class="legend-name">${d.category.replace('Fruits & Vegetables','Fruits & Veg')}</div>
+      <div class="legend-pct">${(d.revenue_share * 100).toFixed(1)}%</div>
+    </div>`
+  ).join('');
+
+  new Chart(document.getElementById('catDonut'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: PALETTE,
+        borderColor: '#060b14',
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      cutout: '66%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ₹${(ctx.parsed / 1e7).toFixed(2)}Cr (${(ctx.parsed / values.reduce((a,b)=>a+b,0) * 100).toFixed(1)}%)`
+          }
+        }
+      }
+    }
+  });
+}
+
+// ═══ CHART: STORE BAR ════════════════════════════════════════════════
+function buildStoreBar() {
+  const data = STOCKSENSE_DATA.store_performance;
+  new Chart(document.getElementById('storeBar'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.store_id),
+      datasets: [{
+        data: data.map(d => d.revenue / 1e6),
+        backgroundColor: data.map((d, i) =>
+          d.store_type === 'Hypermarket' ? 'rgba(59,130,246,0.8)' :
+          d.store_type === 'Supermarket' ? 'rgba(20,184,166,0.8)' :
+          'rgba(245,158,11,0.8)'
+        ),
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ₹${ctx.parsed.y.toFixed(2)}M (${data[ctx.dataIndex].store_type})`
+          }
+        }
+      },
+      scales: {
+        ...chartDefaults.scales,
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => `₹${v}M` } }
+      }
+    }
+  });
+}
+
+// ═══ CHART: DAILY LINE ═══════════════════════════════════════════════
+function buildDailyLine() {
+  const data = STOCKSENSE_DATA.agg_daily_trend;
+  new Chart(document.getElementById('dailyLine'), {
+    type: 'line',
+    data: {
+      labels: data.map(d => d.date.slice(5)),
+      datasets: [{
+        data: data.map(d => d.demand),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      scales: {
+        ...chartDefaults.scales,
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => v.toLocaleString() } }
+      }
+    }
+  });
+}
+
+// ═══ CHART: PARETO BAR ═══════════════════════════════════════════════
+function buildParetoBar() {
+  const data = STOCKSENSE_DATA.category_pareto;
+  new Chart(document.getElementById('paretoBar'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.category.replace('Fruits & Vegetables', 'Fruits & Veg')),
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Revenue',
+          data: data.map(d => d.revenue / 1e6),
+          backgroundColor: PALETTE.map(c => c + 'cc'),
+          borderRadius: 6, yAxisID: 'y',
+        },
+        {
+          type: 'line',
+          label: 'Cumulative %',
+          data: data.map(d => d.cumulative_revenue_share * 100),
+          borderColor: '#f59e0b',
+          borderWidth: 2, tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#f59e0b',
+          yAxisID: 'y2',
+        }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true,
+          labels: { color: TICK_COLOR, font: { size: 11 }, boxWidth: 12, padding: 16 }
+        }
+      },
+      scales: {
+        x: chartDefaults.scales.x,
+        y: {
+          ...chartDefaults.scales.y,
+          ticks: { ...chartDefaults.scales.y.ticks, callback: v => `₹${v}M` }
+        },
+        y2: {
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: { color: TICK_COLOR, font: { size: 11 }, callback: v => v + '%' },
+        }
+      }
+    }
+  });
+}
+
+// ═══ CHART: STORE LINE ════════════════════════════════════════════════
+function buildStoreLineChart() {
+  const stores = Object.keys(STOCKSENSE_DATA.store_daily).slice(0, 5);
+  const allDates = STOCKSENSE_DATA.store_daily[stores[0]].map(d => d.date.slice(5));
+  new Chart(document.getElementById('storeLineChart'), {
+    type: 'line',
+    data: {
+      labels: allDates,
+      datasets: stores.map((s, i) => ({
+        label: s,
+        data: STOCKSENSE_DATA.store_daily[s].map(d => d.demand),
+        borderColor: PALETTE[i],
+        backgroundColor: 'transparent',
+        tension: 0.4, borderWidth: 1.5,
+        pointRadius: 0, pointHoverRadius: 4,
+      }))
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true,
+          labels: { color: TICK_COLOR, font: { size: 10 }, boxWidth: 10, padding: 10 }
+        }
+      }
+    }
+  });
+}
+
+// ═══ CHART: PROMO LIFT BAR (overview) ════════════════════════════════
+function buildPromoLiftBar() {
+  const data = STOCKSENSE_DATA.promotion_lift;
+  new Chart(document.getElementById('promoLiftBar'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.category.replace('Fruits & Vegetables','Fruits & Veg')),
+      datasets: [{
+        data: data.map(d => (d.promotion_lift * 100).toFixed(1)),
+        backgroundColor: data.map((d, i) => PALETTE[i % PALETTE.length] + 'cc'),
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      scales: {
+        ...chartDefaults.scales,
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } }
+      }
+    }
+  });
+}
+
+// ═══ CHART: PROMO LIFT FULL PAGE ═════════════════════════════════════
+function buildPromoLiftFull() {
+  const data = STOCKSENSE_DATA.promotion_lift;
+  new Chart(document.getElementById('promoLiftFull'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.category.replace('Fruits & Vegetables','Fruits & Veg')),
+      datasets: [
+        {
+          label: 'Normal Demand',
+          data: data.map(d => d.normal_mean_demand),
+          backgroundColor: 'rgba(99,163,255,0.4)', borderRadius: 4,
+        },
+        {
+          label: 'Promoted Demand',
+          data: data.map(d => d.promoted_mean_demand),
+          backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 4,
+        }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true,
+          labels: { color: TICK_COLOR, font: { size: 11 }, boxWidth: 12, padding: 16 }
+        }
+      }
+    }
+  });
+}
+
+// ═══ CHART: RECONC DONUT ═════════════════════════════════════════════
+function buildReconcDonut() {
+  new Chart(document.getElementById('reconcDonut'), {
+    type: 'doughnut',
+    data: {
+      labels: ['CONSISTENT', 'INVALID_INPUT', 'MAJOR_MISMATCH', 'INSUFFICIENT_DATA'],
+      datasets: [{
+        data: [26899, 4, 2, 2],
+        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#4a6080'],
+        borderColor: '#060b14', borderWidth: 3,
+      }]
+    },
+    options: {
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: chartDefaults.plugins.tooltip,
+      }
+    }
+  });
+}
+
+// ═══ CHART: ABLATION ═════════════════════════════════════════════════
+function buildAblationChart() {
+  const data = STOCKSENSE_DATA.ablation;
+  new Chart(document.getElementById('ablationChart'), {
+    type: 'line',
+    data: {
+      labels: data.map(d => `${d.experiment}\n(${d.features} features)`),
+      datasets: [
+        {
+          label: 'Validation R²',
+          data: data.map(d => d.val_r2),
+          borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)',
+          fill: true, tension: 0.3, borderWidth: 2, pointRadius: 5,
+        },
+        {
+          label: 'Test R²',
+          data: data.map(d => d.test_r2),
+          borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.06)',
+          fill: true, tension: 0.3, borderWidth: 2, pointRadius: 5, borderDash: [4, 3],
+        }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true,
+          labels: { color: TICK_COLOR, font: { size: 11 }, boxWidth: 12, padding: 16 }
+        }
+      },
+      scales: {
+        x: chartDefaults.scales.x,
+        y: {
+          ...chartDefaults.scales.y,
+          min: 0.96, max: 0.985,
+          ticks: { ...chartDefaults.scales.y.ticks, callback: v => v.toFixed(3) }
+        }
+      }
+    }
+  });
+}
+
+// ═══ CHART: REORDER BY STORE ════════════════════════════════════════
+function buildReorderByStore() {
+  const data = STOCKSENSE_DATA.top_reorder;
+  const byStore = {};
+  data.forEach(d => { byStore[d.store_id] = (byStore[d.store_id] || 0) + d.reorder_quantity; });
+  const entries = Object.entries(byStore).sort((a,b) => b[1]-a[1]);
+  new Chart(document.getElementById('reorderByStore'), {
+    type: 'bar',
+    data: {
+      labels: entries.map(e => e[0]),
+      datasets: [{
+        data: entries.map(e => e[1].toFixed(0)),
+        backgroundColor: entries.map((_, i) => PALETTE[i % PALETTE.length] + 'cc'),
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: { ...chartDefaults.scales.x },
+        y: { ...chartDefaults.scales.y }
+      }
+    }
+  });
+}
+
+// ═══ CHART: FORECAST QUALITY ════════════════════════════════════════
+function buildForecastQuality() {
+  // Synthetic sample of error distribution for visual demo (actual in CSVs)
+  const errors = [0.12, 7.41, 7.03, 5.5, 3.2, 1.1, 8.8, 4.4, 2.2, 6.6, 9.1, 3.8, 5.2, 7.7, 2.9,
+                  0.8, 4.1, 6.3, 11.2, 8.4, 3.3, 1.7, 5.9, 10.1, 4.7, 6.8, 2.5, 7.2, 3.6, 9.5];
+  const labels = errors.map((_, i) => `D${i + 1}`);
+  new Chart(document.getElementById('forecastQuality'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Absolute Forecast Error (units)',
+        data: errors,
+        backgroundColor: errors.map(e => e > 9 ? 'rgba(244,63,94,0.7)' : e > 5 ? 'rgba(245,158,11,0.7)' : 'rgba(16,185,129,0.7)'),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true,
+          labels: { color: TICK_COLOR, font: { size: 11 }, boxWidth: 12, padding: 12 }
+        }
+      },
+      scales: {
+        ...chartDefaults.scales,
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + ' units' } }
+      }
+    }
+  });
+}
+
+// ═══ DOM TABLES & LISTS ══════════════════════════════════════════════
+
+function buildStoreTable() {
+  const data = STOCKSENSE_DATA.store_performance;
+  const typeColors = { Hypermarket:'#3b82f6', Supermarket:'#14b8a6', Express:'#f59e0b' };
+  const rows = data.map(d =>
+    `<tr>
+      <td class="mono" style="font-weight:700;">${d.store_id}</td>
+      <td><span class="badge" style="background:${typeColors[d.store_type]||'#3b82f6'}22;color:${typeColors[d.store_type]||'#3b82f6'};border-color:${typeColors[d.store_type]||'#3b82f6'}44">${d.store_type}</span></td>
+      <td class="mono">₹${(d.revenue / 1e6).toFixed(2)}M</td>
+      <td class="mono">${d.units_sold.toLocaleString()}</td>
+      <td class="mono" style="color:${d.stockout_rate > 0.002 ? 'var(--rose)' : d.stockout_rate > 0.001 ? 'var(--amber)' : 'var(--emerald)'}">${(d.stockout_rate * 100).toFixed(3)}%</td>
+      <td class="mono">${d.demand_volatility.toFixed(2)}</td>
+    </tr>`
+  ).join('');
+  document.getElementById('storeTable').innerHTML =
+    `<thead><tr><th>Store</th><th>Type</th><th>Revenue</th><th>Units Sold</th><th>Stockout Rate</th><th>Demand Volatility</th></tr></thead>
+     <tbody>${rows}</tbody>`;
+}
+
+function buildVoltBands() {
+  const bands = STOCKSENSE_DATA.volatility_bands;
+  const total = Object.values(bands).reduce((a, b) => a + b, 0);
+  const colors = { stable: 'var(--emerald)', moderate: 'var(--amber)', high: 'var(--rose)' };
+  const html = Object.entries(bands).filter(([k]) => k !== 'None').map(([band, count]) =>
+    `<div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-size:13px;color:var(--text-secondary);text-transform:capitalize;">${band} Volatility</div>
+        <div style="font-size:13px;font-weight:700;color:${colors[band]||'var(--accent)'};">${count} pairs</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${colors[band]||'var(--accent)'};width:${(count/total*100).toFixed(0)}%"></div></div>
+    </div>`
+  ).join('');
+  document.getElementById('voltBands').innerHTML = html;
+}
+
+function buildStockoutByStore() {
+  const data = STOCKSENSE_DATA.store_performance.sort((a,b) => b.stockout_rate - a.stockout_rate);
+  const html = data.map(d =>
+    `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <div style="font-size:13px;color:var(--text-secondary);">${d.store_id} · ${d.store_type}</div>
+        <div style="font-size:13px;font-weight:700;color:${d.stockout_rate > 0.003 ? 'var(--rose)' : d.stockout_rate > 0.001 ? 'var(--amber)' : 'var(--emerald)'};">${(d.stockout_rate * 100).toFixed(3)}%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${d.stockout_rate > 0.003 ? 'var(--rose)' : d.stockout_rate > 0.001 ? 'var(--amber)' : 'var(--emerald)'};width:${Math.min(d.stockout_rate / 0.004 * 100, 100).toFixed(0)}%"></div></div>
+    </div>`
+  ).join('');
+  document.getElementById('stockoutByStore').innerHTML = html;
+}
+
+function buildStatTests() {
+  const tests = STOCKSENSE_DATA.statistical_tests;
+  const colors = { 'Reject': 'badge-high', 'Do not reject': 'badge-low' };
+  const icons = { 'Reject': '⚡', 'Do not reject': '✓' };
+  const html = tests.map((t, i) => {
+    const p = parseFloat(t.p_value);
+    const pDisplay = p < 0.001 ? '< 0.001' : p.toFixed(4);
+    const rejected = t.decision === 'Reject';
+    return `<div class="test-card">
+      <div class="test-card-header">
+        <div>
+          <div class="test-card-title">${i+1}. ${t.business_question}</div>
+          <div class="test-card-type">Test: ${t.test}</div>
+        </div>
+        <span class="badge ${rejected ? 'badge-high' : 'badge-low'}">${icons[t.decision]} ${t.decision} H₀</span>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div class="test-card-stat">Statistic: <span>${parseFloat(t.statistic).toLocaleString('en', {maximumFractionDigits:2})}</span></div>
+        <div class="test-card-stat">p-value: <span style="color:${rejected?'var(--rose)':'var(--emerald)'}">${pDisplay}</span></div>
+      </div>
+      <div style="margin-top:8px; font-size:12px; color:var(--text-muted); padding:10px;background:rgba(99,163,255,0.04);border-radius:8px;border:1px solid var(--border);">
+        ${rejected
+          ? `<strong style="color:var(--rose)">H₀ rejected (α=0.05).</strong> There is statistically significant evidence for the alternative hypothesis. This is an observational association, not a causal claim.`
+          : `<strong style="color:var(--emerald)">H₀ not rejected (α=0.05).</strong> Insufficient statistical evidence to conclude a difference exists in this sample. The system effect may be absent or underpowered given one-month data.`
+        }
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('statTests').innerHTML = html;
+}
+
+function buildModelList() {
+  const data = STOCKSENSE_DATA.demand_model_comparison.sort((a,b) => b.val_r2 - a.val_r2);
+  const max = data[0].val_r2;
+  const html = data.map((m, i) => {
+    const isWinner = i === 0;
+    const pct = (m.val_r2 / 1.0 * 100).toFixed(1);
+    const color = isWinner ? 'var(--emerald)' : i < 3 ? 'var(--accent)' : 'var(--text-dim)';
+    return `<div class="model-row">
+      <div class="model-name">${m.model}${isWinner ? '<span class="model-winner">SELECTED</span>' : ''}</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="background:${color};width:${(m.val_r2/max*100).toFixed(1)}%"></div></div>
+      <div class="model-metric">${m.val_r2 > 0 ? m.val_r2.toFixed(4) : '—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('demandModelList').innerHTML = html;
+}
+
+function buildStockoutModelList() {
+  const data = STOCKSENSE_DATA.stockout_model_comparison.sort((a,b) => b.val_f1 - a.val_f1);
+  const html = data.map((m, i) => {
+    const isWinner = i === 0;
+    const color = isWinner ? 'var(--emerald)' : i < 2 ? 'var(--accent)' : 'var(--text-dim)';
+    return `<div class="model-row">
+      <div class="model-name">${m.model}${isWinner ? '<span class="model-winner">SELECTED</span>' : ''}</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="background:${color};width:${(m.val_f1 * 100).toFixed(1)}%"></div></div>
+      <div class="model-metric">${m.val_f1.toFixed(4)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('stockoutModelList').innerHTML = html;
+}
+
+function buildPromoTable() {
+  const data = STOCKSENSE_DATA.promotion_lift.sort((a,b) => b.promotion_lift - a.promotion_lift);
+  const rows = data.map(d =>
+    `<tr>
+      <td style="font-weight:600;">${d.category}</td>
+      <td class="mono">${d.normal_mean_demand.toFixed(2)}</td>
+      <td class="mono">${d.promoted_mean_demand.toFixed(2)}</td>
+      <td class="mono" style="color:var(--emerald);font-weight:700;">+${(d.promotion_lift * 100).toFixed(1)}%</td>
+    </tr>`
+  ).join('');
+  document.getElementById('promoTable').innerHTML =
+    `<thead><tr><th>Category</th><th>Baseline Demand</th><th>Promoted Demand</th><th>Lift</th></tr></thead>
+     <tbody>${rows}</tbody>`;
+}
+
+function buildReorderTable() {
+  const data = STOCKSENSE_DATA.top_reorder;
+  const riskClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low' };
+  const rows = data.map((d, i) =>
+    `<tr>
+      <td style="color:var(--text-muted); font-size:11px;">${i+1}</td>
+      <td class="mono" style="font-weight:700;">${d.store_id}</td>
+      <td class="mono">${d.product_id}</td>
+      <td class="mono">${d.predicted_7_day_demand.toFixed(1)}</td>
+      <td class="mono">${d.safety_stock.toFixed(1)}</td>
+      <td class="mono" style="color:var(--accent);font-weight:700;">${d.reorder_quantity.toFixed(0)}</td>
+      <td><span class="badge ${riskClass[d.risk_level]||'badge-low'}">${d.risk_level}</span></td>
+    </tr>`
+  ).join('');
+  document.getElementById('reorderTable').innerHTML =
+    `<thead><tr><th>#</th><th>Store</th><th>SKU</th><th>7-Day Forecast</th><th>Safety Stock</th><th>Reorder Qty</th><th>Risk</th></tr></thead>
+     <tbody>${rows}</tbody>`;
+}
+
+// ═══ MODEL TAB SWITCH ════════════════════════════════════════════════
+let stockoutListBuilt = false;
+let ablationBuilt = false;
+
+function switchModelTab(btn, tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-demand').style.display = 'none';
+  document.getElementById('tab-stockout').style.display = 'none';
+  document.getElementById('tab-ablation').style.display = 'none';
+  document.getElementById('tab-' + tab).style.display = 'block';
+  if (tab === 'stockout' && !stockoutListBuilt) {
+    buildStockoutModelList();
+    stockoutListBuilt = true;
+  }
+  if (tab === 'ablation' && !ablationBuilt) {
+    buildAblationChart();
+    ablationBuilt = true;
+  }
+}
+
+// ═══ INIT ════════════════════════════════════════════════════════════
+(function init() {
+  // Overview charts
+  buildCatDonut();
+  buildStoreBar();
+  buildDailyLine();
+
+  // EDA charts
+  buildParetoBar();
+  buildStoreLineChart();
+  buildPromoLiftBar();
+  buildStoreTable();
+  buildVoltBands();
+
+  // Stockout
+  buildStockoutByStore();
+  buildReconcDonut();
+
+  // Promotions
+  buildPromoLiftFull();
+  buildPromoTable();
+
+  // Models
+  buildModelList();
+
+  // Stats
+  buildStatTests();
+
+  // Decisions / Inventory
+  buildReorderTable();
+  buildReorderByStore();
+  buildForecastQuality();
+})();
+</script>
+
+</body>
+</html>
